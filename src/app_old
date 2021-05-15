@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Web3 from 'web3';
+import AppContext from '../context';
 
 function App() {
     const [address, setAddress] = useState('');
@@ -44,8 +45,8 @@ function App() {
         let createdvlt = await contracts.exchange.methods.swapTokens("1").send({ from: window.web3.currentProvider.selectedAddress });
         console.log(createdvlt);
         await balances();
-        
-        
+
+
 
     };
     // let connect = () => {
@@ -127,21 +128,18 @@ function App() {
             .send({ from: window.web3.currentProvider.selectedAddress })
             .then(x => console.log(x))
 
-        
+
+    }
+    function Qwe() {
+        let st = useContext(AppContext);
+        console.log(st);
+        return (null);
     }
 
     return (
-        <div className="App">
-            <button onClick={() => connect()}>
-                {address.slice(0, 6) || 'Connect to Metamask'}
-            </button>
-            <br></br>
-            <input ref={valueInput} />
-            <button onClick={async () => await setValue()}>action</button>
-            <button onClick={async () => await approve1()}>approve 1 firefox</button>
-            <button onClick={async () => await approve2()}>approve 2 chrome</button>
-        </div>
+        <Qwe />
     );
 }
+
 
 export default App;

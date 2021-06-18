@@ -1,13 +1,30 @@
-import React, { useContext, useReducer, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import AppContext from '../context.js';
 
 const AppContextProvider = props => {
+
     const [state, setState] = useState({
-        address: ""
+        externalDataLoaded: false,
+        coinsToSelect: [],
+        userLocks: {},
+        contracts: {},
+        userAddress: "",
+        network: "eth",
+        selectedToken: {},
+        tokenSpendAllowance: -1,
+        amount: -1,
+        lockUntil: -1,
+        needUpdateUserLocks: true, needUpdateAllowance: true
     });
 
-    const setAppContext = (appContext) => {
+    //for debugging
+    window.ctx = state;
+    useEffect(() => {
         console.log(state);
+    }, [state])
+
+
+    const setAppContext = (appContext) => {
         setState({ ...state, ...appContext });
     };
 
@@ -17,5 +34,7 @@ const AppContextProvider = props => {
         </AppContext.Provider>
     );
 };
+
+export const useAppContext = () => useContext(AppContext);
 
 export default AppContextProvider;

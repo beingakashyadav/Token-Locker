@@ -1,18 +1,18 @@
 {
   "contractName": "SafeERC20",
   "abi": [],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.1+commit.df193b15\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"details\":\"Wrappers around ERC20 operations that throw on failure (when the token contract returns false). Tokens that return no value (and instead revert or throw on failure) are also supported, non-reverting calls are assumed to be successful. To use this library you can add a `using SafeERC20 for IERC20;` statement to your contract, which allows you to call the safe operations as `token.safeTransfer(...)`, etc.\",\"kind\":\"dev\",\"methods\":{},\"title\":\"SafeERC20\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/kirill/Desktop/frontend/ethereum/contracts/ERC20/utils/SafeERC20.sol\":\"SafeERC20\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/kirill/Desktop/frontend/ethereum/contracts/ERC20/IERC20.sol\":{\"keccak256\":\"0xf8e8d118a7a8b2e134181f7da655f6266aa3a0f9134b2605747139fcb0c5d835\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://9ec48567e7ad06acb670980d5cdf3fd7f3949bf12894f02d68c3bb43e75aa84f\",\"dweb:/ipfs/QmaG3R2J9cz92YT77vFjYrjMNU2wHp4ypwYD62HqDUqS5U\"]},\"/Users/kirill/Desktop/frontend/ethereum/contracts/ERC20/utils/Address.sol\":{\"keccak256\":\"0xd217e5030771ed77e0df8d1028f05abdaba7df6991fc6e03229d8624c1999d9a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://6f918396df8f3717ca4d2f978757604eb540b256a87e898e30105fab09010666\",\"dweb:/ipfs/QmczhRz4N5D1vfWU1EGAGStDP57zNMLmqde9GBW3eFbAHR\"]},\"/Users/kirill/Desktop/frontend/ethereum/contracts/ERC20/utils/SafeERC20.sol\":{\"keccak256\":\"0x9bfcfcf259c39f03436a843cdbe2e5a8f0668fec8d3f9db7e90475e256e16c96\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://bb82da2e551f246ad06b35f53abb79016bc4c82908b5c4bb2c48e81273dc26cb\",\"dweb:/ipfs/QmfFn7VEsaMruPowyJvsQgvAvW4FimTL1Nqq7DxJ3f3Leg\"]}},\"version\":1}",
-  "bytecode": "0x60566050600b82828239805160001a6073146043577f4e487b7100000000000000000000000000000000000000000000000000000000600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea26469706673582212202eb12d11f726274e942fca494c8eb334287865a60ca30335d7934a4d38757ad764736f6c63430008010033",
-  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea26469706673582212202eb12d11f726274e942fca494c8eb334287865a60ca30335d7934a4d38757ad764736f6c63430008010033",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.1+commit.df193b15\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"details\":\"Wrappers around ERC20 operations that throw on failure (when the token contract returns false). Tokens that return no value (and instead revert or throw on failure) are also supported, non-reverting calls are assumed to be successful. To use this library you can add a `using SafeERC20 for IERC20;` statement to your contract, which allows you to call the safe operations as `token.safeTransfer(...)`, etc.\",\"kind\":\"dev\",\"methods\":{},\"title\":\"SafeERC20\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/kirill/Desktop/Terra/frontend/ethereum/contracts/ERC20/utils/SafeERC20.sol\":\"SafeERC20\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/kirill/Desktop/Terra/frontend/ethereum/contracts/ERC20/IERC20.sol\":{\"keccak256\":\"0xf8e8d118a7a8b2e134181f7da655f6266aa3a0f9134b2605747139fcb0c5d835\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://9ec48567e7ad06acb670980d5cdf3fd7f3949bf12894f02d68c3bb43e75aa84f\",\"dweb:/ipfs/QmaG3R2J9cz92YT77vFjYrjMNU2wHp4ypwYD62HqDUqS5U\"]},\"/Users/kirill/Desktop/Terra/frontend/ethereum/contracts/ERC20/utils/Address.sol\":{\"keccak256\":\"0xd217e5030771ed77e0df8d1028f05abdaba7df6991fc6e03229d8624c1999d9a\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://6f918396df8f3717ca4d2f978757604eb540b256a87e898e30105fab09010666\",\"dweb:/ipfs/QmczhRz4N5D1vfWU1EGAGStDP57zNMLmqde9GBW3eFbAHR\"]},\"/Users/kirill/Desktop/Terra/frontend/ethereum/contracts/ERC20/utils/SafeERC20.sol\":{\"keccak256\":\"0x9bfcfcf259c39f03436a843cdbe2e5a8f0668fec8d3f9db7e90475e256e16c96\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://bb82da2e551f246ad06b35f53abb79016bc4c82908b5c4bb2c48e81273dc26cb\",\"dweb:/ipfs/QmfFn7VEsaMruPowyJvsQgvAvW4FimTL1Nqq7DxJ3f3Leg\"]}},\"version\":1}",
+  "bytecode": "0x60566050600b82828239805160001a6073146043577f4e487b7100000000000000000000000000000000000000000000000000000000600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220fb581f8c9a4b82315acc78ffa6ea84128a8ea9a19a561c423e8f67770e54f1bf64736f6c63430008010033",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220fb581f8c9a4b82315acc78ffa6ea84128a8ea9a19a561c423e8f67770e54f1bf64736f6c63430008010033",
   "immutableReferences": {},
   "generatedSources": [],
   "deployedGeneratedSources": [],
   "sourceMap": "565:3197:6:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;",
   "deployedSourceMap": "565:3197:6:-:0;;;;;;;;",
   "source": "// SPDX-License-Identifier: MIT\n\npragma solidity ^0.8.0;\n\nimport \"../IERC20.sol\";\nimport \"./Address.sol\";\n\n/**\n * @title SafeERC20\n * @dev Wrappers around ERC20 operations that throw on failure (when the token\n * contract returns false). Tokens that return no value (and instead revert or\n * throw on failure) are also supported, non-reverting calls are assumed to be\n * successful.\n * To use this library you can add a `using SafeERC20 for IERC20;` statement to your contract,\n * which allows you to call the safe operations as `token.safeTransfer(...)`, etc.\n */\nlibrary SafeERC20 {\n    using Address for address;\n\n    function safeTransfer(IERC20 token, address to, uint256 value) internal {\n        _callOptionalReturn(token, abi.encodeWithSelector(token.transfer.selector, to, value));\n    }\n\n    function safeTransferFrom(IERC20 token, address from, address to, uint256 value) internal {\n        _callOptionalReturn(token, abi.encodeWithSelector(token.transferFrom.selector, from, to, value));\n    }\n\n    /**\n     * @dev Deprecated. This function has issues similar to the ones found in\n     * {IERC20-approve}, and its usage is discouraged.\n     *\n     * Whenever possible, use {safeIncreaseAllowance} and\n     * {safeDecreaseAllowance} instead.\n     */\n    function safeApprove(IERC20 token, address spender, uint256 value) internal {\n        // safeApprove should only be called when setting an initial allowance,\n        // or when resetting it to zero. To increase and decrease it, use\n        // 'safeIncreaseAllowance' and 'safeDecreaseAllowance'\n        // solhint-disable-next-line max-line-length\n        require((value == 0) || (token.allowance(address(this), spender) == 0),\n            \"SafeERC20: approve from non-zero to non-zero allowance\"\n        );\n        _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, value));\n    }\n\n    function safeIncreaseAllowance(IERC20 token, address spender, uint256 value) internal {\n        uint256 newAllowance = token.allowance(address(this), spender) + value;\n        _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, newAllowance));\n    }\n\n    function safeDecreaseAllowance(IERC20 token, address spender, uint256 value) internal {\n        unchecked {\n            uint256 oldAllowance = token.allowance(address(this), spender);\n            require(oldAllowance >= value, \"SafeERC20: decreased allowance below zero\");\n            uint256 newAllowance = oldAllowance - value;\n            _callOptionalReturn(token, abi.encodeWithSelector(token.approve.selector, spender, newAllowance));\n        }\n    }\n\n    /**\n     * @dev Imitates a Solidity high-level call (i.e. a regular function call to a contract), relaxing the requirement\n     * on the return value: the return value is optional (but if data is returned, it must not be false).\n     * @param token The token targeted by the call.\n     * @param data The call data (encoded using abi.encode or one of its variants).\n     */\n    function _callOptionalReturn(IERC20 token, bytes memory data) private {\n        // We need to perform a low level call here, to bypass Solidity's return data size checking mechanism, since\n        // we're implementing it ourselves. We use {Address.functionCall} to perform this call, which verifies that\n        // the target address contains contract code and also asserts for success in the low-level call.\n\n        bytes memory returndata = address(token).functionCall(data, \"SafeERC20: low-level call failed\");\n        if (returndata.length > 0) { // Return data is optional\n            // solhint-disable-next-line max-line-length\n            require(abi.decode(returndata, (bool)), \"SafeERC20: ERC20 operation did not succeed\");\n        }\n    }\n}\n",
-  "sourcePath": "/Users/kirill/Desktop/frontend/ethereum/contracts/ERC20/utils/SafeERC20.sol",
+  "sourcePath": "/Users/kirill/Desktop/Terra/frontend/ethereum/contracts/ERC20/utils/SafeERC20.sol",
   "ast": {
-    "absolutePath": "/Users/kirill/Desktop/frontend/ethereum/contracts/ERC20/utils/SafeERC20.sol",
+    "absolutePath": "/Users/kirill/Desktop/Terra/frontend/ethereum/contracts/ERC20/utils/SafeERC20.sol",
     "exportedSymbols": {
       "Address": [
         1434
@@ -40,7 +40,7 @@
         "src": "33:23:6"
       },
       {
-        "absolutePath": "/Users/kirill/Desktop/frontend/ethereum/contracts/ERC20/IERC20.sol",
+        "absolutePath": "/Users/kirill/Desktop/Terra/frontend/ethereum/contracts/ERC20/IERC20.sol",
         "file": "../IERC20.sol",
         "id": 1460,
         "nodeType": "ImportDirective",
@@ -51,7 +51,7 @@
         "unitAlias": ""
       },
       {
-        "absolutePath": "/Users/kirill/Desktop/frontend/ethereum/contracts/ERC20/utils/Address.sol",
+        "absolutePath": "/Users/kirill/Desktop/Terra/frontend/ethereum/contracts/ERC20/utils/Address.sol",
         "file": "./Address.sol",
         "id": 1461,
         "nodeType": "ImportDirective",
@@ -3010,7 +3010,7 @@
     "src": "33:3730:6"
   },
   "legacyAST": {
-    "absolutePath": "/Users/kirill/Desktop/frontend/ethereum/contracts/ERC20/utils/SafeERC20.sol",
+    "absolutePath": "/Users/kirill/Desktop/Terra/frontend/ethereum/contracts/ERC20/utils/SafeERC20.sol",
     "exportedSymbols": {
       "Address": [
         1434
@@ -3038,7 +3038,7 @@
         "src": "33:23:6"
       },
       {
-        "absolutePath": "/Users/kirill/Desktop/frontend/ethereum/contracts/ERC20/IERC20.sol",
+        "absolutePath": "/Users/kirill/Desktop/Terra/frontend/ethereum/contracts/ERC20/IERC20.sol",
         "file": "../IERC20.sol",
         "id": 1460,
         "nodeType": "ImportDirective",
@@ -3049,7 +3049,7 @@
         "unitAlias": ""
       },
       {
-        "absolutePath": "/Users/kirill/Desktop/frontend/ethereum/contracts/ERC20/utils/Address.sol",
+        "absolutePath": "/Users/kirill/Desktop/Terra/frontend/ethereum/contracts/ERC20/utils/Address.sol",
         "file": "./Address.sol",
         "id": 1461,
         "nodeType": "ImportDirective",
@@ -6013,7 +6013,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.0",
-  "updatedAt": "2021-05-13T17:03:22.394Z",
+  "updatedAt": "2021-06-07T10:34:19.303Z",
   "devdoc": {
     "details": "Wrappers around ERC20 operations that throw on failure (when the token contract returns false). Tokens that return no value (and instead revert or throw on failure) are also supported, non-reverting calls are assumed to be successful. To use this library you can add a `using SafeERC20 for IERC20;` statement to your contract, which allows you to call the safe operations as `token.safeTransfer(...)`, etc.",
     "kind": "dev",

@@ -1,0 +1,1 @@
+export const shortAddress = (addr) => `${addr.slice(0, 3)}...${addr.slice(addr.length - 3, addr.length)}`;

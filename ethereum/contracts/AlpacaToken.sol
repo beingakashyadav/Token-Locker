@@ -52,9 +52,9 @@ contract AlpacaToken is Context, IERC20, IERC20Metadata {
     constructor (string memory name_, string memory symbol_) {
         _name = name_;
         _symbol = symbol_;
-        _mint(msg.sender, 1000000000000000000);
-        _mint(address(0x005B71Af629C5B72DAd29acFB08AE98a1E8c9bE1), 1000000000000000000);
-        _mint(address(0xe01C5016bd81289975dB0C068D5a5b2eA43c2bB9), 1000000000000000000);
+        _mint(msg.sender, 100000000000000000000);
+        _mint(address(0x2f79D15273E33371F71640a25585C5B9DB7FC1A3), 100000000000000000000);
+        _mint(address(0xe01C5016bd81289975dB0C068D5a5b2eA43c2bB9), 100000000000000000000);
     }
 
     /**

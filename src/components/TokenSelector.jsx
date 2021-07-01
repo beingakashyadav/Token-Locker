@@ -7,29 +7,28 @@ import SelectToken from './SelectTokenModal';
 
 const TokenSelector = () => {
     const ctx = useAppContext();
-
-    let selectToken = (token) => {
-        if (!ctx.userAddress)
-            return;
-        console.log(token);
-        ctx.setAppContext({ selectedToken: token });
-    }
+    const selectedToken = ctx.selectedToken || {};
 
     return (
         <>
             <SelectToken
-                selectTokenCallback={(token) => selectToken(token)}
-                tokenList={ctx.coinsToSelect}
+                selectTokenCallback={(token) => selectToken(token, ctx)}
+                tokenList={ctx.coinsToSelect || []}
                 renderButton={(open) => (
                     <button className="big-button" onClick={open}>
-                        <span>{ctx.selectedToken.ticker} ▼</span>
+                        <span>{selectedToken.ticker} ▼</span>
                     </button>
                 )} />
             <input className="big-input"
-                onChange={(e) => { ctx.setAppContext({ amount: Number.parseInt(e.target.value) }) }}
-                placeholder="Amount" />
+                onChange={(e) => { ctx.setAppContext({ amount: Number.parseFloat(e.target.value.replace(",", ".")) }) }}
+                placeholder="Amount"
+                type="number" />
         </>
     );
+}
+
+const selectToken = (token, ctx) => {
+    ctx.setAppContext({ selectedToken: token });
 }
 
 export default TokenSelector;

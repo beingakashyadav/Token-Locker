@@ -1,21 +1,24 @@
 import React, { useContext, useEffect, useState } from 'react';
 import AppContext from '../context.js';
 
+const defaultState = {
+    externalDataLoaded: false,
+    coinsToSelect: [],
+    userLocks: {},
+    contracts: {},
+    lockerContract: {},
+    userAddress: "",
+    chain: "eth",
+    tokenSpendAllowance: -1,
+    amount: -1,
+    lockUntilDate: -1,
+    needUpdateUserLocks: true, 
+    needUpdateAllowance: true
+};
+
 const AppContextProvider = props => {
 
-    const [state, setState] = useState({
-        externalDataLoaded: false,
-        coinsToSelect: [],
-        userLocks: {},
-        contracts: {},
-        userAddress: "",
-        network: "eth",
-        selectedToken: {},
-        tokenSpendAllowance: -1,
-        amount: -1,
-        lockUntil: -1,
-        needUpdateUserLocks: true, needUpdateAllowance: true
-    });
+    const [state, setState] = useState({ ...defaultState });
 
     //for debugging
     window.ctx = state;

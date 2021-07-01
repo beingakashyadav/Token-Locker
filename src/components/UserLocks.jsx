@@ -7,10 +7,10 @@ const UserLocks = ({ }) => {
     const ctx = useAppContext();
 
     useEffect(() => {
-        if (!ctx.userAddress || !ctx.needUpdateUserLocks)
+        if (!(ctx.userAddress && ctx.needUpdateUserLocks))
             return;
 
-        updateLocks(ctx)
+        updateLocks(ctx);
     }, [ctx.userAddress, ctx.needUpdateUserLocks])
 
     let vaultsExist = ctx.userLocks?.userVaults?.length > 0;
@@ -30,13 +30,15 @@ const UserLocks = ({ }) => {
 
 const UserLock = ({ lock, index }) => {
     let ctx = useAppContext();
-    let availableToClaim = lock.checkpoints[0].releaseTargetTimestamp <= moment().unix()
+    let availableToClaim = lock.checkpoints[0].releaseTargetTimestamp <= moment().unix();
     let untilDate = moment.unix(lock.checkpoints[0].releaseTargetTimestamp).format("DD/MM/YY HH:mm");
     let claimed = lock.checkpoints[0].claimed;
     let btnclass = `big-button userlock-claim ${(!availableToClaim || claimed) && "disabled"}`;
 
     let button = (
-        <button className={btnclass} onClick={() => !(!availableToClaim || claimed) && claimByVaultId(ctx, index)}>
+        <button 
+            className={btnclass} 
+            onClick={() => !(!availableToClaim || claimed) && claimByVaultId(ctx, index)}>
             {claimed ? "Claimed" : "Claim"}
         </button>
     );
@@ -52,17 +54,15 @@ const UserLock = ({ lock, index }) => {
 }
 
 const claimByVaultId = (ctx, vaultId) => {
-    ctx.contracts
-        .locker
+    ctx.lockerContract
         .methods
         .claimByVaultId(vaultId)
         .send({ from: window.web3.currentProvider.selectedAddress })
         .on('receipt', () => updateLocks(ctx));
 }
 
-const updateLocks = (ctx) => {
-    ctx.contracts
-        .locker
+const updateLocks = (ctx) => {  
+    ctx.lockerContract
         .methods
         .getUserVaults(ctx.userAddress)
         .call()

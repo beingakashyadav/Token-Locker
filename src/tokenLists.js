@@ -22,12 +22,14 @@ const getRoptenTokenlist = async () => {
     { 
         name: alpacaToken.contractName,
         ticker: "ALP",
-        address: alpacaToken.networks["3"].address
+        address: alpacaToken.networks["3"].address,
+        totalSupply: "200000000000000000000"
     }, 
     {
         name: "DAI (Ropsten)",
         ticker: "DAI",
-        address: "0xad6d458402f60fd3bd25163575031acdce07538d"
+        address: "0xad6d458402f60fd3bd25163575031acdce07538d",
+        totalSupply: "100000000000000000000000000000000000000000000000000000000000000000000"
     }];
 };
 

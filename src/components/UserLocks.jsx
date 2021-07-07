@@ -2,6 +2,7 @@ import moment from "moment";
 import { useEffect } from "react";
 import { shortAddress } from "../helpers";
 import { useAppContext } from "./AppContextProvider"
+import LoadingSpinner from "./LoadingSpinner";
 
 const UserLocks = ({ }) => {
     const ctx = useAppContext();
@@ -13,7 +14,7 @@ const UserLocks = ({ }) => {
         updateLocks(ctx);
     }, [ctx.userAddress, ctx.needUpdateUserLocks])
 
-    let vaultsExist = ctx.userLocks?.userVaults?.length > 0;
+    let vaultsExist = ctx.userLocks?.length > 0;
 
     if (!vaultsExist)
         return (<span className="lock-label last-label"></span>)
@@ -22,7 +23,7 @@ const UserLocks = ({ }) => {
         <>
             <span className="lock-label last-label">Your locks</span>
             <div className="lock-block user-locks">
-                {ctx.userLocks.userVaults.map((x, index) => (<UserLock key={Math.random()} lock={x} index={index} />))}
+                {ctx.userLocks.map((x, index) => (<UserLock key={Math.random()} lock={x} index={index} />))}
             </div>
         </>
     )
@@ -36,8 +37,8 @@ const UserLock = ({ lock, index }) => {
     let btnclass = `big-button userlock-claim ${(!availableToClaim || claimed) && "disabled"}`;
 
     let button = (
-        <button 
-            className={btnclass} 
+        <button
+            className={btnclass}
             onClick={() => !(!availableToClaim || claimed) && claimByVaultId(ctx, index)}>
             {claimed ? "Claimed" : "Claim"}
         </button>
@@ -48,25 +49,51 @@ const UserLock = ({ lock, index }) => {
             <div className="userlock-label">
                 {`${shortAddress(lock.tokenAddress)} - until ${untilDate}`}
             </div>
-            {button}
+            {lock.loading ? <LoadingSpinner /> : button}
         </div>
     )
 }
 
 const claimByVaultId = (ctx, vaultId) => {
-    ctx.lockerContract
-        .methods
-        .claimByVaultId(vaultId)
-        .send({ from: window.web3.currentProvider.selectedAddress })
-        .on('receipt', () => updateLocks(ctx));
+    new Promise((resolve) => {
+        setVaultLoadingById(ctx, vaultId)
+        resolve();
+    }).then(() => {
+        ctx.lockerContract
+            .methods
+            .claimByVaultId(vaultId)
+            .send({ from: window.web3.currentProvider.selectedAddress })
+            .on('receipt', () => setVaultLoadingById(ctx, vaultId));
+    });
 }
 
-const updateLocks = (ctx) => {  
+const setVaultLoadingById = (ctx, vaultId) => {
+    let newLocks = [...ctx.userLocks];
+    let current = { ...newLocks[vaultId] };
+    current.loading = !current.loading;
+    newLocks[vaultId] = current;
+    ctx.setAppContext({ userLocks: newLocks });
+}
+
+const updateLocks = (ctx) => {
     ctx.lockerContract
         .methods
         .getUserVaults(ctx.userAddress)
         .call()
-        .then(x => ctx.setAppContext({ userLocks: x, needUpdateUserLocks: false }));
+        .then(x => {
+            ctx.setAppContext({
+                userLocks: x.userVaults.map(y => ({
+                    loading: false,
+                    tokenAddress: y.tokenAddress,
+                    checkpoints: y.checkpoints.map(z => ({
+                        claimed: z.claimed,
+                        releaseTargetTimestamp: z.releaseTargetTimestamp,
+                        tokensCount: z.tokensCount
+                    }))
+                })),
+                needUpdateUserLocks: false
+            });
+        });
 }
 
 export default UserLocks;

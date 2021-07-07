@@ -38,23 +38,6 @@ const App = () => {
         loadData();
     }, [ctx.externalDataLoaded]);
 
-    useEffect(() => {
-        if ((!ctx.userAddress || !ctx.selectedToken.address) && ctx.needUpdateAllowance)
-            return;
-
-        ctx.selectedToken
-            .contract
-            .methods
-            .allowance(ctx.userAddress, ctx.contracts.locker._address)
-            .call()
-            .then(x => {
-                ctx.setAppContext({
-                    tokenSpendAllowance: Number.parseInt(x),
-                    needUpdateAllowance: false
-                })
-            });
-    }, [ctx.needUpdateAllowance])
-
     if (!ctx.externalDataLoaded)
         return null;
 

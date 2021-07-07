@@ -1,4 +1,5 @@
 import React, {  } from 'react';
+import { toBaseUnit } from '../helpers';
 import "../styles/App.scss";
 import "../styles/Buttons.scss";
 import "../styles/Inputs.scss";
@@ -20,9 +21,12 @@ const TokenSelector = () => {
                     </button>
                 )} />
             <input className="big-input"
-                onChange={(e) => { ctx.setAppContext({ amount: Number.parseFloat(e.target.value.replace(",", ".")) }) }}
+                onChange={(e) => { 
+                    ctx.setAppContext({ amount: toBaseUnit(e.target.value.replace(",", "."), 18) }) 
+                }}
                 placeholder="Amount"
                 type="number" />
+            {/* <div className="token-user-balance">balance: 1201023</div> */}
         </>
     );
 }

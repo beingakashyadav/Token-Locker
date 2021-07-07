@@ -6,7 +6,7 @@ window.Web3Utils = Web3Utils;
 const web3 = new Web3(window.ethereum);
 let erc20Abi = "";
 
-export const shortAddress = (addr, start = 3, end = 3) =>
+export const shortAddress = (addr, start = 5, end = 2) =>
     `${addr.slice(0, start)}...${addr.slice(addr.length - end, addr.length)}`;
 
 export const getLockerContract = async (network) => {
@@ -33,6 +33,7 @@ export const getErc20Abi = async () => {
     return erc20Abi;
 }
 
+export const toBigNumber = (number) => new Web3Utils.BN(number);
 
 export function toBaseUnit(value, decimals) {
 

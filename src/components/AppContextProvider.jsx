@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import AppContext from '../context.js';
+import { toBigNumber } from '../helpers.js';
 
 const defaultState = {
     externalDataLoaded: false,
@@ -9,8 +10,8 @@ const defaultState = {
     lockerContract: {},
     userAddress: "",
     chain: "eth",
-    tokenSpendAllowance: -1,
-    amount: -1,
+    tokenSpendAllowance: toBigNumber(-1),
+    amount: toBigNumber(-1),
     lockUntilDate: -1,
     needUpdateUserLocks: true, 
     needUpdateAllowance: true

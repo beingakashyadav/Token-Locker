@@ -1,9 +1,8 @@
 import Axios from 'axios';
 import { ETH_GANACHE, ETH_MAINNET, ETH_ROPSTEN } from "./constants";
-import Web3 from 'web3';
 import Web3Utils from 'web3-utils';
-window.Web3Utils = Web3Utils;
-const web3 = new Web3(window.ethereum);
+import { web3 } from "./web3provider"
+
 let erc20Abi = "";
 
 export const shortAddress = (addr, start = 5, end = 2) =>

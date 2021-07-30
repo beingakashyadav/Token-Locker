@@ -10,17 +10,20 @@ import Datetime from 'react-datetime';
 import "react-datetime/css/react-datetime.css";
 import moment from "moment";
 import UserLocks from "./UserLocks"
-import { getLockerContract } from '../helpers';
+import { getLockerContract, selectToken } from '../helpers';
 import { getEthTokenList } from '../tokenLists';
 import { ETH_GANACHE, ETH_ROPSTEN } from '../constants';
-import Web3 from 'web3';
-const web3 = new Web3(window.ethereum);
+import { web3 } from "../web3provider"
 
 const App = () => {
     const ctx = useAppContext();
+    const metamaskInstalled = !!(typeof web3 !== 'undefined' && web3?.currentProvider?.isMetaMask);
 
     useEffect(() => {
         if (ctx.externalDataLoaded)
+            return;
+
+        if (!metamaskInstalled)
             return;
 
         const loadData = async () => {
@@ -30,19 +33,25 @@ const App = () => {
 
             ctx.setAppContext({
                 coinsToSelect: tokenlist,
+                selectedToken: await ctx.chain.provider.selectToken(tokenlist[0]),
                 lockerContract: locker,
                 externalDataLoaded: true,
                 networkId: networkId
-            })
+            });
+
         }
+
         loadData();
     }, [ctx.externalDataLoaded]);
 
-    if (!ctx.externalDataLoaded)
-        return null;
+    if (!metamaskInstalled)
+        return ("Please install Metamask");
 
     if (ctx.networkId !== ETH_ROPSTEN && ctx.networkId !== ETH_GANACHE)
-        return ("Switch network to Ropsten in MetaMask")
+        return ("Switch network to Ropsten in MetaMask");
+
+    if (!ctx.externalDataLoaded)
+        return ("Loading...");
 
     return (
         <>

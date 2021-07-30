@@ -13,20 +13,20 @@ function NetworkSelector() {
         <>
             <div className="tabs">
                 <div className="tabs-switcher">
-                    <button 
-                        className="tabs tabs-eth big-button animated shadow" 
-                        onClick={() => switchNetwork("eth", ctx)}>
-                            eth
+                    <button
+                        className="tabs tabs-eth big-button animated shadow"
+                        onClick={() => switchNetwork(ctx, "eth")}>
+                        eth / bsc
                     </button>
-                    <button 
-                        className="tabs tabs-eth big-button animated shadow" 
-                        // onClick={() => switchNetwork("terra", ctx)}
-                        >terra (soon)</button>
-                    <button 
-                        className="tabs tabs-connect animated big-button" 
+                    <button
+                        className="tabs tabs-eth big-button animated shadow"
+                        onClick={() => switchNetwork(ctx, "terra")}
+                    >terra</button>
+                    <button
+                        className="tabs tabs-connect animated big-button"
                         onClick={async () => ctx.userAddress ? disconnect(ctx) : await connect(ctx)}>
-                            {getConnectBtnLabel(ctx)}
-                        </button>
+                        {getConnectBtnLabel(ctx)}
+                    </button>
                 </div>
             </div>
         </>
@@ -45,9 +45,11 @@ const disconnect = (ctx) => {
     ctx.setAppContext({ userAddress: "" });
 };
 
-const switchNetwork = (chain, ctx) => {
-    if (chains.find(x => x === chain))
-        ctx.setAppContext({ chain })
+const switchNetwork = (ctx, network) => {
+    let chain = chains.find(x => x.name === network);
+
+    if (chain)
+        ctx.setAppContext({ chain });
 }
 
 const getConnectBtnLabel = (ctx) => {
@@ -55,7 +57,7 @@ const getConnectBtnLabel = (ctx) => {
     if (addr)
         return shortAddress(addr);
 
-    return `Connect to ${ctx.chain === "eth" ? "Metamask" : "Terra Station"}`
+    return `Connect to ${ctx.chain.name === "eth" ? "Metamask" : "Terra Station"}`
 }
 
 export default NetworkSelector;

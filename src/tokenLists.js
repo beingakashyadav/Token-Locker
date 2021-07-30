@@ -39,6 +39,7 @@ const getGanacheTokenlist = async () => {
     return [{ 
         name: alpacaToken.contractName,
         ticker: "ALP",
-        address: alpacaToken.networks["5777"].address
+        address: alpacaToken.networks["5777"].address,
+        totalSupply: "200000000000000000000"
     }];
 };

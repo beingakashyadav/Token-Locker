@@ -1,24 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from 'react-responsive-modal';
 import 'react-responsive-modal/styles.css';
-import Web3 from 'web3';
-import { getErc20Abi } from '../helpers';
 import '../styles/Popup.scss'
 import { useAppContext } from './AppContextProvider';
-const web3 = new Web3(window.ethereum);
+import { web3 } from "../web3provider"
 
-const SelectToken = ({ selectTokenCallback, tokenList, renderButton }) => {
+const SelectToken = ({ tokenList, renderButton }) => {
     const ctx = useAppContext();
     const [open, setOpen] = useState(false);
     const onOpenModal = () => setOpen(true);
     const onCloseModal = () => setOpen(false);
-
-    useEffect(() => {
-        if (ctx.selectedToken)
-            return;
-
-        selectToken(tokenList[0], selectTokenCallback);
-    }, [ctx.selectedToken])
 
     return (
         <>
@@ -39,7 +30,7 @@ const SelectToken = ({ selectTokenCallback, tokenList, renderButton }) => {
                         {tokenList.map(token => (
                             <div key={token.address}>
                                 <button className={"big-button"} onClick={async () => {
-                                    await selectToken (token, selectTokenCallback);
+                                    ctx.setAppContext({ selectedToken: await ctx.chain.provider.selectToken(token) })
                                     onCloseModal();
                                 }}>
                                     {`${token.name} - ${token.address}`}
@@ -52,10 +43,5 @@ const SelectToken = ({ selectTokenCallback, tokenList, renderButton }) => {
         </>
     )
 };
-
-const selectToken = async (token, selectTokenCallback) => {
-    let contract = new web3.eth.Contract(await getErc20Abi(), token.address);
-    selectTokenCallback({ ...token, contract });
-}
 
 export default SelectToken;

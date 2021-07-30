@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { chains } from '../constants.js';
 import AppContext from '../context.js';
 import { toBigNumber } from '../helpers.js';
 
@@ -6,10 +7,11 @@ const defaultState = {
     externalDataLoaded: false,
     coinsToSelect: [],
     userLocks: {},
+    selectedToken: {},
     contracts: {},
     lockerContract: {},
     userAddress: "",
-    chain: "eth",
+    chain: chains[0],
     tokenSpendAllowance: toBigNumber(-1),
     amount: toBigNumber(-1),
     lockUntilDate: -1,

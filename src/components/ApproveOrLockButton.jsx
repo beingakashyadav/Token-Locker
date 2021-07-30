@@ -1,15 +1,16 @@
 import moment from 'moment';
 import React, { useEffect } from 'react';
+import { contextType } from 'react-datetime';
+import { chains } from '../constants';
 import { toBaseUnit, toBigNumber } from '../helpers';
 import { useAppContext } from './AppContextProvider';
-import Web3Utils from 'web3-utils';
 
 const ApproveOrLockButton = () => {
 
     const ctx = useAppContext();
 
     useEffect(() => {
-        if (!(ctx.userAddress && ctx.selectedToken?.address && ctx.needUpdateAllowance))
+        if (!(ctx.userAddress && ctx.selectedToken.address && ctx.needUpdateAllowance))
             return;
 
         ctx.selectedToken
@@ -33,34 +34,13 @@ const ApproveOrLockButton = () => {
 
     let lockBtn = (<button
         className={btnclass}
-        onClick={valid ? () => lock(ctx) : () => { }}>Lock</button>); //empty object for future scenarios
+        onClick={valid ? () => ctx.chain.provider.lock(ctx) : () => { }}>Lock</button>); //empty object for future scenarios
 
     let approveBtn = (<button
         className={btnclass}
-        onClick={valid ? () => approve(ctx) : () => { }}>Approve</button>);
+        onClick={valid ? () => ctx.chain.provider.approve(ctx) : () => { }}>Approve</button>);
 
     return approved ? lockBtn : approveBtn;
 };
-
-const approve = (ctx) => {
-    ctx.selectedToken
-        .contract
-        .methods
-        .approve(ctx.lockerContract._address, ctx.selectedToken.totalSupply)
-        .send({ from: window.web3.currentProvider.selectedAddress })
-        .on('receipt', () => {
-            ctx.setAppContext({ tokenSpendAllowance: ctx.amount })
-        });
-}
-
-const lock = (ctx) => {
-    ctx.lockerContract
-        .methods
-        .lock(ctx.lockUntilDate, ctx.selectedToken.address, toBaseUnit(ctx.amount.toString(), 18)) //need to get token decimals from somewhere
-        .send({ from: window.web3.currentProvider.selectedAddress })
-        .on('receipt', () => {
-            ctx.setAppContext({ needUpdateUserLocks: true, needUpdateAllowance: true });
-        });
-}
 
 export default ApproveOrLockButton;

@@ -16,12 +16,15 @@ function NetworkSelector() {
                     <button
                         className="tabs tabs-eth big-button animated shadow"
                         onClick={() => switchNetwork(ctx, "eth")}>
-                        eth / bsc
+                        eth
                     </button>
                     <button
                         className="tabs tabs-eth big-button animated shadow"
-                        onClick={() => switchNetwork(ctx, "terra")}
-                    >terra</button>
+                        onClick={() => switchNetwork(ctx, "bsc")}>
+                        bsc</button>
+                    {/* <button
+                        className="tabs tabs-eth big-button animated shadow">
+                        terra (soon)</button> */}
                     <button
                         className="tabs tabs-connect animated big-button"
                         onClick={async () => ctx.userAddress ? disconnect(ctx) : await connect(ctx)}>
@@ -57,7 +60,7 @@ const getConnectBtnLabel = (ctx) => {
     if (addr)
         return shortAddress(addr);
 
-    return `Connect to ${ctx.chain.name === "eth" ? "Metamask" : "Terra Station"}`
+    return `Connect to ${ctx.chain.name === "terra" ? "Terra Station" : "Metamask"}`
 }
 
 export default NetworkSelector;

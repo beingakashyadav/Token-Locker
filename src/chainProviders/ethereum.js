@@ -15,13 +15,17 @@ const ethereum = {
     lock: (ctx) => {
         ctx.lockerContract
             .methods
-            .lock(ctx.lockUntilDate, ctx.selectedToken.address, toBaseUnit(ctx.amount.toString(), 18)) //need to get token decimals from somewhere
+            //todo need to get token decimals from somewhere
+            .lock(ctx.lockUntilDate, ctx.selectedToken.address, toBaseUnit(ctx.amount.toString(), 18)) 
             .send({ from: window.web3.currentProvider.selectedAddress })
             .on('receipt', () => {
                 ctx.setAppContext({ needUpdateUserLocks: true, needUpdateAllowance: true });
             });
     },
-    selectToken: async (token) => {
+    addContract: async (token) => {
+        if (!token)
+            return {};
+            
         let contract = new web3.eth.Contract(await getErc20Abi(), token.address);
         return { ...token, contract };
     }

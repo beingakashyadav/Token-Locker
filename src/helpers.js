@@ -1,13 +1,20 @@
 import Axios from 'axios';
-import { ETH_GANACHE, ETH_MAINNET, ETH_ROPSTEN } from "./constants";
+import { ETH_BSC, ETH_GANACHE, ETH_MAINNET, ETH_ROPSTEN } from "./constants";
 import Web3Utils from 'web3-utils';
 import { web3 } from "./web3provider"
 
 let erc20Abi = "";
+const isString = (s) => typeof s === 'string' || s instanceof String;
+
+export const checkNetwork = (networkId) => 
+    (networkId === ETH_ROPSTEN || 
+     networkId === ETH_GANACHE ||
+     networkId === ETH_BSC);
 
 export const shortAddress = (addr, start = 5, end = 2) =>
     `${addr.slice(0, start)}...${addr.slice(addr.length - end, addr.length)}`;
 
+//todo: reorganize solution
 export const getLockerContract = async (network) => {
     switch (network) {
         case ETH_MAINNET:
@@ -34,11 +41,20 @@ export const getErc20Abi = async () => {
 
 export const toBigNumber = (number) => new Web3Utils.BN(number);
 
-export function toBaseUnit(value, decimals) {
-
-    function isString(s) {
-        return (typeof s === 'string' || s instanceof String)
+export const fromBaseUnit = (value, decimals = 18) => {
+    if (!isString(value)) {
+        throw new Error('Pass strings to prevent floating point precision issues.')
     }
+
+    if (value.length < decimals)
+        return value;
+
+    let splitPosition = value.length - decimals;
+
+    return `${value.slice(0, splitPosition)}.${value.slice(splitPosition, value.length)}`;
+}
+
+export const toBaseUnit = (value, decimals = 18) => {
     const BN = Web3Utils.BN;
 
     if (!isString(value)) {

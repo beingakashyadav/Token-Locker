@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { toBaseUnit } from '../helpers';
+import { fromBaseUnit, toBaseUnit } from '../helpers';
 import "../styles/App.scss";
 import "../styles/Buttons.scss";
 import "../styles/Inputs.scss";
@@ -27,7 +27,7 @@ const TokenSelector = () => {
     }, [ctx.selectedToken.balance, ctx.userAddress])
 
     let balanceLabel = ctx.selectedToken?.balance && ctx.userAddress ? (
-        <div className="token-user-balance">balance: {ctx.selectedToken?.balance}</div>
+        <div className="token-user-balance">balance: {fromBaseUnit(ctx.selectedToken?.balance)}</div>
     ) : null;
 
     return (

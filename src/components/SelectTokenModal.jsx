@@ -30,7 +30,7 @@ const SelectToken = ({ tokenList, renderButton }) => {
                         {tokenList.map(token => (
                             <div key={token.address}>
                                 <button className={"big-button"} onClick={async () => {
-                                    ctx.setAppContext({ selectedToken: await ctx.chain.provider.selectToken(token) })
+                                    ctx.setAppContext({ selectedToken: await ctx.chain.provider.addContract(token) })
                                     onCloseModal();
                                 }}>
                                     {`${token.name} - ${token.address}`}

@@ -1,36 +1,42 @@
 import moment from "moment";
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { shortAddress } from "../helpers";
-import { useAppContext } from "./AppContextProvider"
+import { tokenSelectorSlice } from "../reduxSlices/tokenSelectorSlice";
+import { claimByVaultId, getUserLocks } from "../reduxSlices/userLocksSlice";
 import LoadingSpinner from "./LoadingSpinner";
 
-const UserLocks = ({ }) => {
-    const ctx = useAppContext();
+const UserLocks = () => {
+    const dispatch = useDispatch();
+    const userLocksSlice = useSelector(state => state.userLocksSlice);
+    const networkSlice = useSelector(state => state.networkSlice);
 
     useEffect(() => {
-        if (!(ctx.userAddress && ctx.needUpdateUserLocks))
+        if (!networkSlice.userAddress)
             return;
 
-        updateLocks(ctx);
-    }, [ctx.userAddress, ctx.needUpdateUserLocks])
+        dispatch(getUserLocks({ userAddress: networkSlice.userAddress }));
+    }, [networkSlice.userAddress, dispatch])
 
-    let vaultsExist = ctx.userLocks?.length > 0;
+    let vaultsExist = userLocksSlice.userLocks?.length > 0;
 
-    if (!vaultsExist)
+    if (!vaultsExist || !networkSlice.userAddress)
         return (<span className="lock-label last-label"></span>)
 
     return (
         <>
             <span className="lock-label last-label">Your locks</span>
             <div className="lock-block user-locks">
-                {ctx.userLocks.map((x, index) => (<UserLock key={Math.random()} lock={x} index={index} />))}
+                {userLocksSlice.userLocks.map((x, index) => 
+                    (<UserLock key={index} lock={x} index={index} />))}
             </div>
         </>
     )
 }
 
 const UserLock = ({ lock, index }) => {
-    let ctx = useAppContext();
+    const dispatch = useDispatch();
+    const externalDataSlice = useSelector(state => state.externalDataSlice);
     let availableToClaim = lock.checkpoints[0].releaseTargetTimestamp <= moment().unix();
     let untilDate = moment.unix(lock.checkpoints[0].releaseTargetTimestamp).format("DD/MM/YY HH:mm");
     let claimed = lock.checkpoints[0].claimed;
@@ -39,61 +45,28 @@ const UserLock = ({ lock, index }) => {
     let button = (
         <button
             className={btnclass}
-            onClick={() => !(!availableToClaim || claimed) && claimByVaultId(ctx, index)}>
+            onClick={async () => {
+                if (!availableToClaim || claimed)
+                    return;
+
+                await dispatch(claimByVaultId({ vaultId: index }));
+            }}
+        >
             {claimed ? "Claimed" : "Claim"}
-        </button>
+        </button >
     );
+
+    let tokenName = externalDataSlice.tokenList.find(x => x.address === lock.tokenAddress).name || 
+                    shortAddress(lock.tokenAddress);
 
     return (
         <div className="user-lock">
             <div className="userlock-label">
-                {`${shortAddress(lock.tokenAddress)} - until ${untilDate}`}
+                {`${tokenName} - until ${untilDate}`}
             </div>
             {lock.loading ? <LoadingSpinner /> : button}
         </div>
     )
-}
-
-const claimByVaultId = (ctx, vaultId) => {
-    new Promise((resolve) => {
-        setVaultLoadingById(ctx, vaultId)
-        resolve();
-    }).then(() => {
-        ctx.lockerContract
-            .methods
-            .claimByVaultId(vaultId)
-            .send({ from: window.web3.currentProvider.selectedAddress })
-            .on('receipt', () => setVaultLoadingById(ctx, vaultId));
-    });
-}
-
-const setVaultLoadingById = (ctx, vaultId) => {
-    let newLocks = [...ctx.userLocks];
-    let current = { ...newLocks[vaultId] };
-    current.loading = !current.loading;
-    newLocks[vaultId] = current;
-    ctx.setAppContext({ userLocks: newLocks });
-}
-
-const updateLocks = (ctx) => {
-    ctx.lockerContract
-        .methods
-        .getUserVaults(ctx.userAddress)
-        .call()
-        .then(x => {
-            ctx.setAppContext({
-                userLocks: x.userVaults.map(y => ({
-                    loading: false,
-                    tokenAddress: y.tokenAddress,
-                    checkpoints: y.checkpoints.map(z => ({
-                        claimed: z.claimed,
-                        releaseTargetTimestamp: z.releaseTargetTimestamp,
-                        tokensCount: z.tokensCount
-                    }))
-                })),
-                needUpdateUserLocks: false
-            });
-        });
 }
 
 export default UserLocks;

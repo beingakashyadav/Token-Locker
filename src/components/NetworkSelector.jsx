@@ -1,13 +1,14 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import "../styles/App.scss";
-import { chains } from "../constants";
 import "../styles/Buttons.scss";
 import "../styles/Inputs.scss";
-import { useAppContext } from './AppContextProvider';
 import { shortAddress } from '../helpers';
+import { useSelector, useDispatch } from 'react-redux';
+import { connectToProvider, selectNetwork, setAddress } from '../reduxSlices/networkSlice';
 
 function NetworkSelector() {
-    const ctx = useAppContext();
+    const networkState = useSelector(state => state.networkSlice);
+    const dispatch = useDispatch();
 
     return (
         <>
@@ -15,20 +16,17 @@ function NetworkSelector() {
                 <div className="tabs-switcher">
                     <button
                         className="tabs tabs-eth big-button animated shadow"
-                        onClick={() => switchNetwork(ctx, "eth")}>
+                        onClick={() => dispatch(selectNetwork({ network: "eth" }))}>
                         eth
                     </button>
-                    <button
-                        className="tabs tabs-eth big-button animated shadow"
-                        onClick={() => switchNetwork(ctx, "bsc")}>
-                        bsc</button>
                     {/* <button
-                        className="tabs tabs-eth big-button animated shadow">
-                        terra (soon)</button> */}
+                        className="tabs tabs-eth big-button animated shadow"
+                        onClick={() => dispatch(selectNetwork({ network: "terra" }))}>
+                        Terra</button> */}
                     <button
                         className="tabs tabs-connect animated big-button"
-                        onClick={async () => ctx.userAddress ? disconnect(ctx) : await connect(ctx)}>
-                        {getConnectBtnLabel(ctx)}
+                        onClick={async () => await onConnectButtonClick(networkState, dispatch)}>
+                        {getConnectButtonLabel(networkState)}
                     </button>
                 </div>
             </div>
@@ -36,31 +34,18 @@ function NetworkSelector() {
     );
 }
 
-const connect = async (ctx) => {
-    if (typeof window.ethereum === 'undefined' || ctx.userAddress)
-        return;
-
-    let request = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    ctx.setAppContext({ userAddress: request[0] });
-};
-
-const disconnect = (ctx) => {
-    ctx.setAppContext({ userAddress: "" });
-};
-
-const switchNetwork = (ctx, network) => {
-    let chain = chains.find(x => x.name === network);
-
-    if (chain)
-        ctx.setAppContext({ chain });
+const onConnectButtonClick = async (networkState, dispatch) => {
+    if (networkState.userAddress)
+        await dispatch(setAddress(""));
+    else 
+        await dispatch(connectToProvider());
 }
 
-const getConnectBtnLabel = (ctx) => {
-    let addr = ctx.userAddress;
-    if (addr)
-        return shortAddress(addr);
+const getConnectButtonLabel = (networkState) => {
+    if (networkState.userAddress)
+        return shortAddress(networkState.userAddress);
 
-    return `Connect to ${ctx.chain.name === "terra" ? "Terra Station" : "Metamask"}`
+    return `Connect to ${networkState.network === "terra" ? "Terra Station" : "Metamask"}`;
 }
 
 export default NetworkSelector;

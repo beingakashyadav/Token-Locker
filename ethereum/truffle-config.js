@@ -1,6 +1,6 @@
 const HDWalletProvider = require("@truffle/hdwallet-provider");
 
-//0x2f79D15273E33371F71640a25585C5B9DB7FC1A3
+//test addr 0x2f79D15273E33371F71640a25585C5B9DB7FC1A3
 const mnemonic = "current silent give horn actual lazy usual flower speed muscle toward deliver";
 
 module.exports = {
@@ -15,7 +15,8 @@ module.exports = {
             provider: function () {
                 return new HDWalletProvider(mnemonic, "https://ropsten.infura.io/v3/465f054881974d14a17defb11c140a42")
             },
-            network_id: 3
+            network_id: 3,
+            gas: 1500000
         }
     },
     compilers: {

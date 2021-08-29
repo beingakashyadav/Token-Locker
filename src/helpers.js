@@ -1,31 +1,37 @@
 import Axios from 'axios';
-import { ETH_BSC, ETH_GANACHE, ETH_MAINNET, ETH_ROPSTEN } from "./constants";
+import { ETH_GANACHE, ETH_MAINNET, ETH_ROPSTEN } from "./constants";
 import Web3Utils from 'web3-utils';
-import { web3 } from "./web3provider"
+import { getWeb3 } from './web3provider';
 
 let erc20Abi = "";
-const isString = (s) => typeof s === 'string' || s instanceof String;
 
-export const checkNetwork = (networkId) => 
-    (networkId === ETH_ROPSTEN || 
-     networkId === ETH_GANACHE ||
-     networkId === ETH_BSC);
+export const checkNetwork = (networkId) =>
+(networkId === ETH_ROPSTEN ||
+    networkId === ETH_GANACHE);
 
 export const shortAddress = (addr, start = 5, end = 2) =>
     `${addr.slice(0, start)}...${addr.slice(addr.length - end, addr.length)}`;
 
-//todo: reorganize solution
-export const getLockerContract = async (network) => {
+export const getLockerContract = async () => {
+    let web3 = await getWeb3();
+    let network = await web3.eth.getChainId();
+
     switch (network) {
         case ETH_MAINNET:
         case ETH_ROPSTEN:
             let request1 = await Axios.get("/contracts/Locker.json");
             let locker1 = request1.data;
-            return new web3.eth.Contract(locker1.abi, locker1.networks["3"].address);
+            return {
+                abi: locker1.abi,
+                address: locker1.networks["3"].address
+            };
         case ETH_GANACHE:
             let request = await Axios.get("/contracts/Locker.json");
             let locker = request.data;
-            return new web3.eth.Contract(locker.abi, locker.networks["5777"].address);
+            return {
+                abi: locker.abi,
+                address: locker.networks["5777"].address
+            };
         default:
             return []
     }
@@ -40,64 +46,5 @@ export const getErc20Abi = async () => {
 }
 
 export const toBigNumber = (number) => new Web3Utils.BN(number);
-
-export const fromBaseUnit = (value, decimals = 18) => {
-    if (!isString(value)) {
-        throw new Error('Pass strings to prevent floating point precision issues.')
-    }
-
-    if (value.length < decimals)
-        return value;
-
-    let splitPosition = value.length - decimals;
-
-    return `${value.slice(0, splitPosition)}.${value.slice(splitPosition, value.length)}`;
-}
-
-export const toBaseUnit = (value, decimals = 18) => {
-    const BN = Web3Utils.BN;
-
-    if (!isString(value)) {
-        throw new Error('Pass strings to prevent floating point precision issues.')
-    }
-    const ten = new BN(10);
-    const base = ten.pow(new BN(decimals));
-
-    // Is it negative?
-    let negative = (value.substring(0, 1) === '-');
-    if (negative) {
-        value = value.substring(1);
-    }
-
-    if (value === '.') {
-        throw new Error(
-            `Invalid value ${value} cannot be converted to`
-            + ` base unit with ${decimals} decimals.`);
-    }
-
-    // Split it into a whole and fractional part
-    let comps = value.split('.');
-    if (comps.length > 2) { throw new Error('Too many decimal points'); }
-
-    let whole = comps[0], fraction = comps[1];
-
-    if (!whole) { whole = '0'; }
-    if (!fraction) { fraction = '0'; }
-    if (fraction.length > decimals) {
-        throw new Error('Too many decimal places');
-    }
-
-    while (fraction.length < decimals) {
-        fraction += '0';
-    }
-
-    whole = new BN(whole);
-    fraction = new BN(fraction);
-    let wei = (whole.mul(base)).add(fraction);
-
-    if (negative) {
-        wei = wei.neg();
-    }
-
-    return new BN(wei.toString(10), 10);
-}
+export const fromBaseUnit = (value) => Web3Utils.fromWei(value);
+export const toBaseUnit = (value) => Web3Utils.toWei(new Web3Utils.BN(value));

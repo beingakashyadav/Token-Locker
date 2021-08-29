@@ -1,47 +1,48 @@
 import React, { useEffect } from 'react';
-import { fromBaseUnit, toBaseUnit } from '../helpers';
+import { useDispatch, useSelector } from 'react-redux';
+import { fromBaseUnit } from '../helpers';
+import { getSelectedTokenBalance, selectToken, setTokenAmount } from '../reduxSlices/tokenSelectorSlice';
 import "../styles/App.scss";
 import "../styles/Buttons.scss";
 import "../styles/Inputs.scss";
-import { useAppContext } from './AppContextProvider';
-import SelectToken from './SelectTokenModal';
+import SelectTokenModal from './SelectTokenModal';
 
 const TokenSelector = () => {
-    const ctx = useAppContext();
+    const selectorState = useSelector(state => state.tokenSelectorSlice);
+    const networkState = useSelector(state => state.networkSlice);
+    const dispatch = useDispatch();
 
-    //update balance of selected token
+    const tokenList = useSelector(state => state.externalDataSlice.tokenList);
+
     useEffect(() => {
-        if (!ctx.selectedToken.address || !ctx.userAddress)
+        if (selectorState.selectedToken.ticker)
             return;
 
-        ctx.selectedToken
-            .contract
-            .methods
-            .balanceOf(ctx.userAddress)
-            .call()
-            .then(x => {
-                let newToken = Object.assign({}, ctx.selectedToken);
-                newToken.balance = x;
-                ctx.setAppContext({ selectedToken: newToken })
-            });
-    }, [ctx.selectedToken.balance, ctx.userAddress])
+        dispatch(selectToken(tokenList[0]))
+    }, [dispatch, selectorState.selectedToken.ticker, tokenList]);
 
-    let balanceLabel = ctx.selectedToken?.balance && ctx.userAddress ? (
-        <div className="token-user-balance">balance: {fromBaseUnit(ctx.selectedToken?.balance)}</div>
+    useEffect(() => {
+        if (!networkState.userAddress)
+            return;
+
+        dispatch(getSelectedTokenBalance({
+            tokenAddress: selectorState.selectedToken.address,
+            userAddress: networkState.userAddress,
+            isNativeCurrency: selectorState.selectedToken.native
+        }));
+    }, [dispatch, networkState.userAddress, selectorState.selectedToken.address])
+
+    let balanceLabel = selectorState.balance && networkState.userAddress ? (
+        <div className="token-user-balance">balance: {fromBaseUnit(selectorState.balance)}</div>
     ) : null;
 
     return (
         <>
-            <SelectToken
-                tokenList={ctx.coinsToSelect || []}
-                renderButton={(open) => (
-                    <button className="big-button" onClick={open}>
-                        <span>{ctx.selectedToken.ticker} ▼</span>
-                    </button>
-                )} />
+            <SelectTokenModal />
             <input className="big-input"
                 onChange={(e) => {
-                    ctx.setAppContext({ amount: toBaseUnit(e.target.value.replace(",", "."), 18) })
+                    let amount = e.target.value.replace(",", ".");
+                    dispatch(setTokenAmount(amount));
                 }}
                 placeholder="Amount"
                 type="number" />

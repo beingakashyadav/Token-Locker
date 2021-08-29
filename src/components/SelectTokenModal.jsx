@@ -1,19 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Modal } from 'react-responsive-modal';
 import 'react-responsive-modal/styles.css';
 import '../styles/Popup.scss'
-import { useAppContext } from './AppContextProvider';
-import { web3 } from "../web3provider"
+import { useDispatch, useSelector } from 'react-redux';
+import { selectToken } from '../reduxSlices/tokenSelectorSlice';
+import { shortAddress } from '../helpers';
 
-const SelectToken = ({ tokenList, renderButton }) => {
-    const ctx = useAppContext();
+const SelectTokenModal = () => {
+    const tokenSelectorState = useSelector(state => state.tokenSelectorSlice);
+    const dispatch = useDispatch();
+
+    const externalDataSlice = useSelector(state => state.externalDataSlice);
+    const tokenList = externalDataSlice.tokenList;
+    const nativeCurrency = externalDataSlice.nativeCurrency;
+
     const [open, setOpen] = useState(false);
     const onOpenModal = () => setOpen(true);
     const onCloseModal = () => setOpen(false);
 
     return (
         <>
-            {renderButton(onOpenModal)}
+            <button className="big-button" onClick={onOpenModal}>
+                <span>{tokenSelectorState.selectedToken.ticker} ▼</span>
+            </button>
             <Modal
                 open={open}
                 onClose={onCloseModal}
@@ -27,16 +36,15 @@ const SelectToken = ({ tokenList, renderButton }) => {
                         Select Token
                     </div>
                     <div>
-                        {tokenList.map(token => (
-                            <div key={token.address}>
-                                <button className={"big-button"} onClick={async () => {
-                                    ctx.setAppContext({ selectedToken: await ctx.chain.provider.addContract(token) })
-                                    onCloseModal();
-                                }}>
-                                    {`${token.name} - ${token.address}`}
-                                </button>
-                            </div>
-                        ))}
+                        <button className={"big-button"} onClick={async () => {
+                            dispatch(selectToken({ ...nativeCurrency, native: true }))
+                            onCloseModal();
+                        }}>
+                            {`${nativeCurrency.ticker}`}
+                        </button>
+                    </div>
+                    <div>
+                        {tokenList.map(token => renderToken(token, onCloseModal, dispatch))}
                     </div>
                 </div>
             </Modal>
@@ -44,4 +52,15 @@ const SelectToken = ({ tokenList, renderButton }) => {
     )
 };
 
-export default SelectToken;
+const renderToken = (token, onCloseModal, dispatch) => {
+    return (<div key={token.address}>
+        <button className={"big-button"} onClick={async () => {
+            dispatch(selectToken(token));
+            onCloseModal();
+        }}>
+            {`${token.name} - ${shortAddress(token.address, 6, 6)}`}
+        </button>
+    </div>);
+}
+
+export default SelectTokenModal;

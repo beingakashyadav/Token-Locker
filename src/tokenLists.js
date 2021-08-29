@@ -1,7 +1,11 @@
-import { ETH_GANACHE, ETH_MAINNET, ETH_ROPSTEN } from "./constants";
+import { ETH_BSC, ETH_GANACHE, ETH_MAINNET, ETH_ROPSTEN } from "./constants";
 import Axios from 'axios';
+import { getWeb3 } from "./web3provider";
 
-export const getEthTokenList = async (network) => {
+export const getEthTokenList = async () => {
+    let web3 = await getWeb3();
+    let network = await web3.eth.getChainId();
+
     switch (network) {
         case ETH_MAINNET: 
             return await getMainnetTokenlist();
@@ -43,3 +47,25 @@ const getGanacheTokenlist = async () => {
         totalSupply: "200000000000000000000"
     }];
 };
+
+export const getNativeCurrency = async () => {
+    let web3 = await getWeb3();
+    let network = await web3.eth.getChainId();
+
+    switch (network) {
+        case ETH_MAINNET: 
+        case ETH_ROPSTEN:
+        case ETH_GANACHE:
+            return {
+                name: "Ethereum",
+                ticker: "ETH"
+            }
+        case ETH_BSC: 
+            return {
+                name: "Binance Coin",
+                ticker: "BNB"
+            }
+        default:
+            return []
+    }
+}

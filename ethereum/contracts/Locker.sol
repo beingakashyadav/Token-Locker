@@ -2,9 +2,8 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
-import "./ERC20/IERC20.sol";
+import "./IERC20.sol";
 import "./SafeMath.sol";
-pragma experimental ABIEncoderV2;
 
 contract Locker {
     using SafeMath for uint256;
@@ -17,6 +16,7 @@ contract Locker {
 
     struct VestedTokenVault {
         address tokenAddress;
+        //ETH for ethereum, BNB for BSC, AVAX for AVA c-chain
         bool nativeToken;
         ReleaseCheckpoint[] checkpoints;
     }
@@ -74,7 +74,7 @@ contract Locker {
         }
     }
 
-    function lockEth(uint256 targetTimestamp) public payable {
+    function lockNativeCurrency(uint256 targetTimestamp) public payable {
         require(targetTimestamp > block.timestamp, "Date in the past selected");
 
         //push new element to user's vault and get it's index
@@ -114,7 +114,7 @@ contract Locker {
 
     // function claimToken(address token) public {}
 
-    function claimByVaultId(uint256 vaultId) public returns (bool) {
+    function claimByVaultId(uint256 vaultId) public payable returns (bool) {
         require(vaultId >= 0, "vaultId should be positive");
 
         VestedTokenVault storage vault = userLocks[msg.sender].userVaults[
@@ -128,16 +128,23 @@ contract Locker {
             "Cannot claim before target date"
         );
 
-        try
-            IERC20(vault.tokenAddress).transfer(
-                msg.sender,
-                checkpoint.tokensCount
-            )
-        returns (bool) {
-            checkpoint.claimed = true;
+        if (vault.nativeToken) {
+            payable(msg.sender).transfer(
+                vault.checkpoints[0].tokensCount
+            );
             return true;
-        } catch (bytes memory) {
-            revert("Transfer error");
+        } else {
+            try
+                IERC20(vault.tokenAddress).transfer(
+                    msg.sender,
+                    checkpoint.tokensCount
+                )
+            returns (bool) {
+                checkpoint.claimed = true;
+                return true;
+            } catch (bytes memory) {
+                revert("Transfer error");
+            }
         }
     }
 

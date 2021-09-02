@@ -46,5 +46,5 @@ export const getErc20Abi = async () => {
 }
 
 export const toBigNumber = (number) => new Web3Utils.BN(number);
-export const fromBaseUnit = (value) => Web3Utils.fromWei(value);
-export const toBaseUnit = (value) => Web3Utils.toWei(new Web3Utils.BN(value));
+export const fromBaseUnit = (value) => Web3Utils.fromWei(value, 'ether');
+export const toBaseUnit = (value) => Web3Utils.toWei(value, 'ether');

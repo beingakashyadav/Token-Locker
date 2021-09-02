@@ -22,6 +22,7 @@ export const getUserLocks = createAsyncThunk(
             return locks.userVaults.map(y => ({
                 loading: false,
                 tokenAddress: y.tokenAddress,
+                nativeCurrency: y.nativeToken,
                 checkpoints: y.checkpoints.map(z => ({
                     claimed: z.claimed,
                     releaseTargetTimestamp: z.releaseTargetTimestamp,

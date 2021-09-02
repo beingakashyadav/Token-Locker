@@ -1,66 +1,53 @@
 import { ETH_BSC, ETH_GANACHE, ETH_MAINNET, ETH_ROPSTEN } from "./constants";
-import Axios from 'axios';
 import { getWeb3 } from "./web3provider";
 
+//todo pass network as dependency
 export const getEthTokenList = async () => {
     let web3 = await getWeb3();
     let network = await web3.eth.getChainId();
 
     switch (network) {
-        case ETH_MAINNET: 
-            return await getMainnetTokenlist();
+        case ETH_MAINNET:
+            return [];
         case ETH_ROPSTEN:
-            return await getRoptenTokenlist();
+            return [
+                {
+                    name: "Alpaca Token",
+                    ticker: "ALP",
+                    address: "0x39edf0b19acfde5c1a1d0272acdde0aa1bb29e62",
+                    totalSupply: "200000000000000000000"
+                },
+                {
+                    name: "DAI (Ropsten)",
+                    ticker: "DAI",
+                    address: "0xad6d458402f60fd3bd25163575031acdce07538d",
+                    totalSupply: "100000000000000000000000000000000000000000000000000000000000000000000"
+                }]
         case ETH_GANACHE:
-            return await getGanacheTokenlist();
+            return [{
+                name: "Alpaca Token",
+                ticker: "ALP",
+                address: "0xFe7bA2E9C18c7Eb318A66b5f6CD57A5c3F4e4a32",
+                totalSupply: "200000000000000000000"
+            }];
         default:
             return []
     }
 }
-
-const getMainnetTokenlist = async () => {};
-const getRoptenTokenlist = async () => {
-    let request = await Axios.get("/contracts/AlpacaToken.json");
-    let alpacaToken = request.data;
-    return [
-    { 
-        name: alpacaToken.contractName,
-        ticker: "ALP",
-        address: alpacaToken.networks["3"].address,
-        totalSupply: "200000000000000000000"
-    }, 
-    {
-        name: "DAI (Ropsten)",
-        ticker: "DAI",
-        address: "0xad6d458402f60fd3bd25163575031acdce07538d",
-        totalSupply: "100000000000000000000000000000000000000000000000000000000000000000000"
-    }];
-};
-
-const getGanacheTokenlist = async () => {
-    let request = await Axios.get("/contracts/AlpacaToken.json");
-    let alpacaToken = request.data;
-    return [{ 
-        name: alpacaToken.contractName,
-        ticker: "ALP",
-        address: alpacaToken.networks["5777"].address,
-        totalSupply: "200000000000000000000"
-    }];
-};
 
 export const getNativeCurrency = async () => {
     let web3 = await getWeb3();
     let network = await web3.eth.getChainId();
 
     switch (network) {
-        case ETH_MAINNET: 
+        case ETH_MAINNET:
         case ETH_ROPSTEN:
         case ETH_GANACHE:
             return {
                 name: "Ethereum",
                 ticker: "ETH"
             }
-        case ETH_BSC: 
+        case ETH_BSC:
             return {
                 name: "Binance Coin",
                 ticker: "BNB"

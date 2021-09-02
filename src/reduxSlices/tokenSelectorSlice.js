@@ -43,13 +43,26 @@ export const lockToken = createAsyncThunk(
             let locker = await getLockerContract();
             let lockerContract = new web3.eth.Contract(locker.abi, locker.address);
 
-            await lockerContract
-                .methods
-                .lock(state.tokenSelectorSlice.lockUntil.toString(), state.tokenSelectorSlice.selectedToken.address, toBaseUnit(state.tokenSelectorSlice.amount))
-                .send({ from: window.ethereum.selectedAddress })
-
+            if (state.tokenSelectorSlice.selectedToken.native) {
+                await lockerContract
+                    .methods
+                    .lockNativeCurrency(state.tokenSelectorSlice.lockUntil.toString())
+                    .send({ from: window.ethereum.selectedAddress, value: toBaseUnit(state.tokenSelectorSlice.amount) })
+            }
+            else {
+                await lockerContract
+                    .methods
+                    .lock(state.tokenSelectorSlice.lockUntil.toString(), state.tokenSelectorSlice.selectedToken.address, toBaseUnit(state.tokenSelectorSlice.amount))
+                    .send({ from: window.ethereum.selectedAddress })
+            }
             await thunkApi.dispatch(getUserLocks({ userAddress: state.networkSlice.userAddress }))
-            await thunkApi.dispatch(getSelectedTokenBalance({ tokenAddress: state.tokenSelectorSlice.selectedToken.address, userAddress: state.networkSlice.userAddress }))
+            await thunkApi.dispatch(getSelectedTokenBalance({
+                tokenAddress: state.tokenSelectorSlice.selectedToken.address,
+                userAddress: state.networkSlice.userAddress,
+                isNativeCurrency: state.tokenSelectorSlice.selectedToken.native
+            }))
+            await thunkApi.dispatch(clearAmount())
+
         }
         catch (e) { console.log(e) }
     }
@@ -127,6 +140,9 @@ export const tokenSelectorSlice = createSlice({
         },
         setLockUntil: (state, action) => {
             state.lockUntil = action.payload
+        },
+        clearAmount: (state) => {
+            state.amount = 0;
         }
     },
     extraReducers: (builder) => {
@@ -163,7 +179,8 @@ export const {
     setTokenAmount,
     selectToken,
     setLockUntil,
-    setApproved
+    setApproved,
+    clearAmount
 } = tokenSelectorSlice.actions;
 
 export default tokenSelectorSlice.reducer;

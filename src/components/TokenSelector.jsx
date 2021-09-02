@@ -30,7 +30,7 @@ const TokenSelector = () => {
             userAddress: networkState.userAddress,
             isNativeCurrency: selectorState.selectedToken.native
         }));
-    }, [dispatch, networkState.userAddress, selectorState.selectedToken.address])
+    }, [dispatch, networkState.userAddress, selectorState.selectedToken.address, selectorState.selectedToken.native])
 
     let balanceLabel = selectorState.balance && networkState.userAddress ? (
         <div className="token-user-balance">balance: {fromBaseUnit(selectorState.balance)}</div>
@@ -45,7 +45,8 @@ const TokenSelector = () => {
                     dispatch(setTokenAmount(amount));
                 }}
                 placeholder="Amount"
-                type="number" />
+                type="number"
+                value={selectorState.amount} />
             {balanceLabel}
         </>
     );

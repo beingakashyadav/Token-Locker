@@ -1,8 +1,7 @@
 import moment from "moment";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { shortAddress } from "../helpers";
-import { tokenSelectorSlice } from "../reduxSlices/tokenSelectorSlice";
+import { fromBaseUnit, shortAddress } from "../helpers";
 import { claimByVaultId, getUserLocks } from "../reduxSlices/userLocksSlice";
 import LoadingSpinner from "./LoadingSpinner";
 
@@ -38,11 +37,12 @@ const UserLock = ({ lock, index }) => {
     const dispatch = useDispatch();
     const externalDataSlice = useSelector(state => state.externalDataSlice);
     let availableToClaim = lock.checkpoints[0].releaseTargetTimestamp <= moment().unix();
+    let amountToClaim = fromBaseUnit(lock.checkpoints[0].tokensCount);
     let untilDate = moment.unix(lock.checkpoints[0].releaseTargetTimestamp).format("DD/MM/YY HH:mm");
     let claimed = lock.checkpoints[0].claimed;
     let btnclass = `big-button userlock-claim ${(!availableToClaim || claimed) && "disabled"}`;
 
-    let button = (
+    let claimButton = (
         <button
             className={btnclass}
             onClick={async () => {
@@ -56,15 +56,20 @@ const UserLock = ({ lock, index }) => {
         </button >
     );
 
-    let tokenName = externalDataSlice.tokenList.find(x => x.address === lock.tokenAddress).name || 
-                    shortAddress(lock.tokenAddress);
+    let tokenTicker = externalDataSlice
+                        .tokenList
+                        .find(x => x.address.toLowerCase() === lock.tokenAddress.toLowerCase())?.ticker;
+    
+    tokenTicker = tokenTicker || shortAddress(lock.tokenAddress);
+                            
+    
 
     return (
         <div className="user-lock">
             <div className="userlock-label">
-                {`${tokenName} - until ${untilDate}`}
+                {`${amountToClaim} ${lock.nativeCurrency ? externalDataSlice.nativeCurrency.ticker : tokenTicker} - until ${untilDate}`}
             </div>
-            {lock.loading ? <LoadingSpinner /> : button}
+            {lock.loading ? <LoadingSpinner /> : claimButton}
         </div>
     )
 }

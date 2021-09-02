@@ -13,6 +13,7 @@ Truffle compiles and copies artifacts at /public/contracts to access them from r
 # TODO 
 
 - Add token lists
+- Add networks - bsc, avax etc
 - Create CosmWasm contracts for cw-20 tokens
 - Create locks with linear and custom release schedule
 - Create integrations with compound/aave to get yield while tokens are locked

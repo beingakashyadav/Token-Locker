@@ -15,6 +15,8 @@ import { clearApproval, setLockUntil } from '../reduxSlices/tokenSelectorSlice';
 
 const App = () => {
     const dataState = useSelector(state => state.externalDataSlice);
+    const tokenSelectorSlice = useSelector(state => state.tokenSelectorSlice);
+    const networkSlice = useSelector(state => state.networkSlice);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -28,7 +30,11 @@ const App = () => {
         return ("Loading...");
 
     window.clearApproval = () => dispatch(clearApproval())
-    
+
+    let dateInvalid = tokenSelectorSlice.lockUntil < moment().unix() && 
+        networkSlice.userAddress && 
+        Number(tokenSelectorSlice.amount) > 0;
+
     return (
         <>
             <NetworkSelector />
@@ -42,7 +48,8 @@ const App = () => {
                     <div className="lock-block">
                         <Datetime
                             isValidDate={current => (current.isAfter(moment().subtract(1, "day")))}
-                            onChange={(e) => e instanceof moment && dispatch(setLockUntil(e.unix()))} />
+                            onChange={(e) => e instanceof moment && dispatch(setLockUntil(e.unix()))}
+                            className={dateInvalid ? "red-rdt" : "" } />
                     </div>
                     <ApproveLockButton />
                     <UserLocks />

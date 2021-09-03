@@ -40,7 +40,7 @@ const SelectTokenModal = () => {
                             dispatch(selectToken({ ...nativeCurrency, native: true }))
                             onCloseModal();
                         }}>
-                            {`${nativeCurrency.ticker}`}
+                            {`${nativeCurrency.name} (${nativeCurrency.ticker})`}
                         </button>
                     </div>
                     <div>
@@ -58,7 +58,7 @@ const renderToken = (token, onCloseModal, dispatch) => {
             dispatch(selectToken(token));
             onCloseModal();
         }}>
-            {`${token.name} - ${shortAddress(token.address, 6, 6)}`}
+            {`${token.name} (${token.ticker})`}
         </button>
     </div>);
 }

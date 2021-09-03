@@ -50,7 +50,8 @@ export const claimByVaultId = createAsyncThunk(
             let state = thunkApi.getState();
             await thunkApi.dispatch(getSelectedTokenBalance({
                 tokenAddress: state.tokenSelectorSlice.selectedToken.address,
-                userAddress: state.networkSlice.userAddress
+                userAddress: state.networkSlice.userAddress,
+                isNativeCurrency: state.tokenSelectorSlice.selectedToken.native
             }));
             await thunkApi.dispatch(getUserLocks({ userAddress: state.networkSlice.userAddress }));
 

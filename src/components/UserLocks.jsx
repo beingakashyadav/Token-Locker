@@ -49,7 +49,7 @@ const UserLock = ({ lock, index }) => {
                 if (!availableToClaim || claimed)
                     return;
 
-                await dispatch(claimByVaultId({ vaultId: index }));
+                await dispatch(claimByVaultId({ vaultId: index.toString() }));
             }}
         >
             {claimed ? "Claimed" : "Claim"}

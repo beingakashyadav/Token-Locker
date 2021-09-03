@@ -73,6 +73,10 @@ body {
                 padding: 5px;
                 border: 2px solid var(--colorShadeA);
                 
+                .red-rdt > input {
+                    border: 2px solid indianred;
+                }
+
                 &.user-locks {
                     display: flex;
                     flex-direction: column;

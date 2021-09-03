@@ -26,7 +26,8 @@ contract Locker {
     }
 
     //every user has multiple vaults: he can store any token with different release schedules.
-    //Token might be duplicated, e.g. Vault1: USDC with 6 months lock + Vault2: USDC with 12 months lock
+    //Token might be duplicated, e.g. 
+    //Vault1: USDC with 6 months lock + Vault2: USDC with 12 months lock + Vault3: DAI with custom schedule
     mapping(address => UserLocks) userLocks;
 
     function lock(
@@ -132,6 +133,7 @@ contract Locker {
             payable(msg.sender).transfer(
                 vault.checkpoints[0].tokensCount
             );
+            checkpoint.claimed = true;
             return true;
         } else {
             try

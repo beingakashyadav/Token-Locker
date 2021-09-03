@@ -62,8 +62,8 @@ const ApproveLockBtnForErc20 = () => {
     let valid = tokenSelectorSlice.selectedToken.address &&
         Number(tokenSelectorSlice.amount) > 0 &&
         Number(tokenSelectorSlice.amount) <= Number(balance) &&
-        tokenSelectorSlice.lockUntil > moment().unix()
-
+        tokenSelectorSlice.lockUntil > moment().unix();
+        
     let approved = Number(fromBaseUnit(tokenSelectorSlice.approvedAmount)) >= Number(tokenSelectorSlice.amount);
     let btnclass = `lock-button animated big-button ${!valid && "disabled"}`;
 

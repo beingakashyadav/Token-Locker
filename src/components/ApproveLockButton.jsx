@@ -1,10 +1,9 @@
 import moment from 'moment';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { toBaseUnit, toBigNumber } from '../helpers';
+import { fromBaseUnit } from '../helpers';
 import { approveToken, getSelectedTokenApproval, lockToken } from '../reduxSlices/tokenSelectorSlice';
 import LoadingSpinner from './LoadingSpinner';
-import Web3Utils from "web3-utils";
 
 const ApproveLockButton = () => {
     const dispatch = useDispatch();
@@ -38,8 +37,9 @@ const ApproveLockBtnForEth = () => {
     const dispatch = useDispatch();
     const tokenSelectorSlice = useSelector(state => state.tokenSelectorSlice);
 
+    let balance = fromBaseUnit(tokenSelectorSlice.balance);
     let valid = Number(tokenSelectorSlice.amount) > 0 &&
-        toBaseUnit(tokenSelectorSlice.amount).cmp(toBigNumber(tokenSelectorSlice.balance)) <= 0 &&
+        Number(tokenSelectorSlice.amount) <= Number(balance) &&
         tokenSelectorSlice.lockUntil > moment().unix();
 
     let btnclass = `lock-button animated big-button ${!valid && "disabled"}`;
@@ -58,14 +58,13 @@ const ApproveLockBtnForErc20 = () => {
     const dispatch = useDispatch();
     const tokenSelectorSlice = useSelector(state => state.tokenSelectorSlice);
 
-    let zero = toBigNumber(0)
-    let baseAmount = toBaseUnit(tokenSelectorSlice.amount);
+    let balance = fromBaseUnit(tokenSelectorSlice.balance);
     let valid = tokenSelectorSlice.selectedToken.address &&
-        baseAmount.cmp(zero) > 0 &&
-        baseAmount.cmp(toBigNumber(tokenSelectorSlice.balance)) <= 0 &&
+        Number(tokenSelectorSlice.amount) > 0 &&
+        Number(tokenSelectorSlice.amount) <= Number(balance) &&
         tokenSelectorSlice.lockUntil > moment().unix()
 
-    let approved = toBigNumber(tokenSelectorSlice.approvedAmount).cmp(toBaseUnit(tokenSelectorSlice.amount)) > 0;
+    let approved = Number(fromBaseUnit(tokenSelectorSlice.approvedAmount)) >= Number(tokenSelectorSlice.amount);
     let btnclass = `lock-button animated big-button ${!valid && "disabled"}`;
 
     let lockBtn = (<button

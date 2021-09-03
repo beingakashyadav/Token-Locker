@@ -1,7 +1,6 @@
 const HDWalletProvider = require("@truffle/hdwallet-provider");
-
-//test addr 0x2f79D15273E33371F71640a25585C5B9DB7FC1A3
-const mnemonic = "current silent give horn actual lazy usual flower speed muscle toward deliver";
+const mnemonic = require("./private.json").mnemonic;
+const endpoints = require("./private.json").endpoints;
 
 module.exports = {
     contracts_build_directory: "../public/contracts",
@@ -13,7 +12,7 @@ module.exports = {
         },
         ropsten: {
             provider: function () {
-                return new HDWalletProvider(mnemonic, "https://ropsten.infura.io/v3/465f054881974d14a17defb11c140a42")
+                return new HDWalletProvider(mnemonic, endpoints.ropsten)
             },
             network_id: 3,
             gas: 1500000

@@ -25,6 +25,11 @@ export const fetchExternalData = createAsyncThunk(
 export const externalDataSlice = createSlice({
     name: 'externalDataSlice',
     initialState,
+    reducers: {
+        setNetwork: (state, action) => {
+            state.chainId = action.payload
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchExternalData.fulfilled, (state, action) => {
@@ -36,5 +41,7 @@ export const externalDataSlice = createSlice({
             });
     },
 });
+
+export const { setNetwork } = externalDataSlice.actions;
 
 export default externalDataSlice.reducer;

@@ -10,9 +10,11 @@ import "react-datetime/css/react-datetime.css";
 import moment from "moment";
 import UserLocks from "./UserLocks"
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchExternalData } from '../reduxSlices/externalDataSlice';
-import { clearApproval, setLockUntil } from '../reduxSlices/tokenSelectorSlice';
+import { fetchExternalData, setNetwork } from '../reduxSlices/externalDataSlice';
+import { setLockUntil } from '../reduxSlices/tokenSelectorSlice';
 import { ETH_GANACHE, ETH_ROPSTEN } from '../constants';
+import { setAddress } from '../reduxSlices/networkSlice';
+import Web3Utils from 'web3-utils';
 
 const App = () => {
     const dataState = useSelector(state => state.externalDataSlice);
@@ -21,13 +23,21 @@ const App = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (dataState.externalDataLoaded || !window?.web3?.currentProvider?.isMetaMask)
+        if (dataState.externalDataLoaded || !window?.ethereum?.isMetaMask)
             return;
+
+        window.ethereum.on('accountsChanged', (accounts) => {
+            dispatch(setAddress({ userAddress: accounts[0] }));
+        });
+
+        window.ethereum.on('chainChanged', (chainId) => {
+            dispatch(setNetwork(Web3Utils.hexToNumber(chainId)));
+        });
 
         dispatch(fetchExternalData());
     }, [dispatch, dataState.externalDataLoaded])
 
-    if (!window?.web3?.currentProvider?.isMetaMask)
+    if (!window?.ethereum?.isMetaMask)
         return ("No metamask detected");
 
     if (dataState.chainId !== ETH_ROPSTEN && dataState.chainId !== ETH_GANACHE)
@@ -35,8 +45,6 @@ const App = () => {
 
     if (!dataState.externalDataLoaded)
         return ("Loading...");
-
-    window.clearApproval = () => dispatch(clearApproval())
 
     let dateInvalid = tokenSelectorSlice.lockUntil < moment().unix() &&
         networkSlice.userAddress &&

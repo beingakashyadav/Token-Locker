@@ -4,7 +4,6 @@ import 'react-responsive-modal/styles.css';
 import '../styles/Popup.scss'
 import { useDispatch, useSelector } from 'react-redux';
 import { selectToken } from '../reduxSlices/tokenSelectorSlice';
-import { shortAddress } from '../helpers';
 
 const SelectTokenModal = () => {
     const tokenSelectorState = useSelector(state => state.tokenSelectorSlice);

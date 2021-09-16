@@ -1,29 +1,25 @@
 import React, { useEffect } from 'react';
 import "../styles/App.scss";
-import "../styles/Buttons.scss";
-import "../styles/Inputs.scss";
 import NetworkSelector from './NetworkSelector';
 import ApproveLockButton from './ApproveLockButton';
 import TokenSelector from './TokenSelector';
-import Datetime from 'react-datetime';
 import "react-datetime/css/react-datetime.css";
-import moment from "moment";
 import UserLocks from "./UserLocks"
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchExternalData, setNetwork } from '../reduxSlices/externalDataSlice';
-import { setLockUntil } from '../reduxSlices/tokenSelectorSlice';
 import { ETH_GANACHE, ETH_ROPSTEN } from '../constants';
 import { setAddress } from '../reduxSlices/networkSlice';
 import Web3Utils from 'web3-utils';
+import DateSelector from './DateSelector';
 
 const App = () => {
-    const dataState = useSelector(state => state.externalDataSlice);
-    const tokenSelectorSlice = useSelector(state => state.tokenSelectorSlice);
-    const networkSlice = useSelector(state => state.networkSlice);
+    const { externalDataSlice } = useSelector(state => state);
     const dispatch = useDispatch();
 
+    const isMetaMask = window?.ethereum?.isMetaMask;
+
     useEffect(() => {
-        if (dataState.externalDataLoaded || !window?.ethereum?.isMetaMask)
+        if (externalDataSlice.externalDataLoaded || !isMetaMask)
             return;
 
         window.ethereum.on('accountsChanged', (accounts) => {
@@ -35,20 +31,17 @@ const App = () => {
         });
 
         dispatch(fetchExternalData());
-    }, [dispatch, dataState.externalDataLoaded])
+    }, [dispatch, externalDataSlice.externalDataLoaded, isMetaMask])
 
-    if (!window?.ethereum?.isMetaMask)
+    if (!isMetaMask)
         return ("No metamask detected");
 
-    if (dataState.chainId !== ETH_ROPSTEN && dataState.chainId !== ETH_GANACHE)
+    if (externalDataSlice.chainId !== ETH_ROPSTEN && 
+        externalDataSlice.chainId !== ETH_GANACHE)
         return ("Please switch network to Ropsten");
 
-    if (!dataState.externalDataLoaded)
+    if (!externalDataSlice.externalDataLoaded)
         return ("Loading...");
-
-    let dateInvalid = tokenSelectorSlice.lockUntil < moment().unix() &&
-        networkSlice.userAddress &&
-        Number(tokenSelectorSlice.amount) > 0;
 
     return (
         <>
@@ -61,10 +54,7 @@ const App = () => {
                     </div>
                     <span className="lock-label">Select date to lock until</span>
                     <div className="lock-block">
-                        <Datetime
-                            isValidDate={current => (current.isAfter(moment().subtract(1, "day")))}
-                            onChange={(e) => e instanceof moment && dispatch(setLockUntil(e.unix()))}
-                            className={dateInvalid ? "red-rdt" : ""} />
+                        <DateSelector />
                     </div>
                     <ApproveLockButton />
                     <UserLocks />

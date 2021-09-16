@@ -14,11 +14,18 @@ const initialState = {
 export const fetchExternalData = createAsyncThunk(
     'externalData/fetchExternalData',
     async () => {
+        let web3 = await getWeb3();
         let list = await getEthTokenList();
         let contract = await getLockerContract();
         let nativeCurrency = await getNativeCurrency();
-        let chainId = await (await getWeb3()).eth.getChainId();
-        return { tokenList: list, lockerContract: contract, nativeCurrency, chainId  };
+        let chainId = await web3.eth.getChainId();
+
+        return { 
+            tokenList: list, 
+            lockerContract: contract, 
+            nativeCurrency, 
+            chainId  
+        };
     }
 );
 

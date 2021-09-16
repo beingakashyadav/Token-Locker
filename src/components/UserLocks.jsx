@@ -6,9 +6,8 @@ import { claimByVaultId, getUserLocks } from "../reduxSlices/userLocksSlice";
 import LoadingSpinner from "./LoadingSpinner";
 
 const UserLocks = () => {
+    const { userLocksSlice, networkSlice } = useSelector(state => state);
     const dispatch = useDispatch();
-    const userLocksSlice = useSelector(state => state.userLocksSlice);
-    const networkSlice = useSelector(state => state.networkSlice);
 
     useEffect(() => {
         if (!networkSlice.userAddress)
@@ -26,7 +25,7 @@ const UserLocks = () => {
         <>
             <span className="lock-label last-label">Your locks</span>
             <div className="lock-block user-locks">
-                {userLocksSlice.userLocks.map((x, index) => 
+                {userLocksSlice.userLocks.map((x, index) =>
                     (<UserLock key={index} lock={x} index={index} />))}
             </div>
         </>
@@ -36,17 +35,20 @@ const UserLocks = () => {
 const UserLock = ({ lock, index }) => {
     const dispatch = useDispatch();
     const externalDataSlice = useSelector(state => state.externalDataSlice);
-    let availableToClaim = lock.checkpoints[0].releaseTargetTimestamp <= moment().unix();
-    let amountToClaim = fromBaseUnit(lock.checkpoints[0].tokensCount);
-    let untilDate = moment.unix(lock.checkpoints[0].releaseTargetTimestamp).format("DD/MM/YY HH:mm");
-    let claimed = lock.checkpoints[0].claimed;
-    let btnclass = `big-button userlock-claim ${(!availableToClaim || claimed) && "disabled"}`;
+
+    let checkpoint = lock.checkpoints[0];
+    let vaultReleased = checkpoint.releaseTargetTimestamp <= moment().unix();
+    let amountToClaim = fromBaseUnit(checkpoint.tokensCount);
+    let untilDate = moment.unix(checkpoint.releaseTargetTimestamp).format("DD/MM/YY HH:mm");
+    let claimed = checkpoint.claimed;
+    let availableToClaim = vaultReleased && !claimed;
+    let btnclass = `big-button userlock-claim ${!availableToClaim && "disabled"}`;
 
     let claimButton = (
         <button
             className={btnclass}
             onClick={async () => {
-                if (!availableToClaim || claimed)
+                if (!availableToClaim)
                     return;
 
                 await dispatch(claimByVaultId({ vaultId: index.toString() }));
@@ -56,22 +58,23 @@ const UserLock = ({ lock, index }) => {
         </button >
     );
 
-    let tokenTicker = externalDataSlice
-                        .tokenList
-                        .find(x => x.address.toLowerCase() === lock.tokenAddress.toLowerCase())?.ticker;
-    
-    tokenTicker = tokenTicker || shortAddress(lock.tokenAddress);
-                            
-    
+    let tokenTicker = getTokenTickerByAddress(externalDataSlice.tokenList, lock.tokenAddress);
+    let label = `${amountToClaim} ${lock.nativeCurrency ? externalDataSlice.nativeCurrency.ticker : tokenTicker} - until ${untilDate}`;
 
     return (
         <div className="user-lock">
             <div className="userlock-label">
-                {`${amountToClaim} ${lock.nativeCurrency ? externalDataSlice.nativeCurrency.ticker : tokenTicker} - until ${untilDate}`}
+                {label}
             </div>
             {lock.loading ? <LoadingSpinner /> : claimButton}
         </div>
     )
 }
+
+const getTokenTickerByAddress = (tokenList, address) => {
+    let tokenTicker = tokenList.find(x => x.address.toLowerCase() === address.toLowerCase())?.ticker;
+
+    return tokenTicker || shortAddress(address);
+};
 
 export default UserLocks;

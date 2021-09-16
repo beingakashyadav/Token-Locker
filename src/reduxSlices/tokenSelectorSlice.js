@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getErc20Abi, getLockerContract, toBaseUnit } from '../helpers';
+import { getErc20Abi, getLockerContract } from '../helpers';
 import { getWeb3 } from '../web3provider';
 import { getUserLocks } from './userLocksSlice';
 
@@ -14,21 +14,18 @@ const initialState = {
 
 export const approveToken = createAsyncThunk(
     'tokenSelector/approveToken',
-    async (_, thunkApi) => {
+    async ({ tokenAddress, approveAmount }) => {
         try {
-            let state = thunkApi.getState();
-
             let web3 = await getWeb3();
             let locker = await getLockerContract();
-            let tokenContract = new web3.eth.Contract(await getErc20Abi(), state.tokenSelectorSlice.selectedToken.address);
-            let totalSupply = state.tokenSelectorSlice.selectedToken.totalSupply;
+            let tokenContract = new web3.eth.Contract(await getErc20Abi(), tokenAddress);
 
             await tokenContract
                 .methods
-                .approve(locker.address, totalSupply)
+                .approve(locker.address, approveAmount)
                 .send({ from: window.ethereum.selectedAddress });
 
-            return totalSupply;
+            return approveAmount;
         }
         catch (e) { console.log(e) }
     }
@@ -36,33 +33,34 @@ export const approveToken = createAsyncThunk(
 
 export const lockToken = createAsyncThunk(
     'tokenSelector/lockToken',
-    async (_, thunkApi) => {
+    async ({ isNative, lockUntil, amount, tokenAddress, userAddress }, { dispatch }) => {
         try {
-            let state = thunkApi.getState();
             let web3 = await getWeb3();
             let locker = await getLockerContract();
             let lockerContract = new web3.eth.Contract(locker.abi, locker.address);
 
-            if (state.tokenSelectorSlice.selectedToken.native) {
+            if (isNative) {
                 await lockerContract
                     .methods
-                    .lockNativeCurrency(state.tokenSelectorSlice.lockUntil.toString())
-                    .send({ from: window.ethereum.selectedAddress, value: toBaseUnit(state.tokenSelectorSlice.amount) })
+                    .lockNativeCurrency(lockUntil.toString())
+                    .send({
+                        from: userAddress,
+                        value: amount
+                    })
             }
             else {
                 await lockerContract
                     .methods
-                    .lock(state.tokenSelectorSlice.lockUntil.toString(), state.tokenSelectorSlice.selectedToken.address, toBaseUnit(state.tokenSelectorSlice.amount))
-                    .send({ from: window.ethereum.selectedAddress })
+                    .lock(lockUntil.toString(), tokenAddress, amount)
+                    .send({ from: userAddress })
             }
-            await thunkApi.dispatch(getUserLocks({ userAddress: state.networkSlice.userAddress }))
-            await thunkApi.dispatch(getSelectedTokenBalance({
-                tokenAddress: state.tokenSelectorSlice.selectedToken.address,
-                userAddress: state.networkSlice.userAddress,
-                isNativeCurrency: state.tokenSelectorSlice.selectedToken.native
+            await dispatch(getUserLocks({ userAddress }))
+            await dispatch(getSelectedTokenBalance({
+                tokenAddress,
+                userAddress,
+                isNativeCurrency: isNative
             }))
-            await thunkApi.dispatch(clearAmount())
-
+            await dispatch(clearAmount())
         }
         catch (e) { console.log(e) }
     }
@@ -139,7 +137,7 @@ export const tokenSelectorSlice = createSlice({
             state.selectedToken = { ...action.payload }
         },
         setLockUntil: (state, action) => {
-            state.lockUntil = action.payload
+            state.lockUntil = action.payload;
         },
         clearAmount: (state) => {
             state.amount = 0;

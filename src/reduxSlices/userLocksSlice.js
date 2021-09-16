@@ -11,7 +11,6 @@ export const getUserLocks = createAsyncThunk(
     'userLocks/getUserLocks',
     async ({ userAddress }) => {
         try {
-            console.log("user address " + userAddress);
             let web3 = await getWeb3();
             let locker = await getLockerContract();
             let contract = new web3.eth.Contract(locker.abi, locker.address)
@@ -30,7 +29,6 @@ export const getUserLocks = createAsyncThunk(
                     tokensCount: z.tokensCount
                 }))
             }));
-            console.log(locks);
             return a;
         }
         catch (e) { console.log(e); }

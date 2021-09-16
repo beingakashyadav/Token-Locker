@@ -2,38 +2,35 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fromBaseUnit } from '../helpers';
 import { getSelectedTokenBalance, selectToken, setTokenAmount } from '../reduxSlices/tokenSelectorSlice';
-import "../styles/App.scss";
-import "../styles/Buttons.scss";
-import "../styles/Inputs.scss";
 import SelectTokenModal from './SelectTokenModal';
 
 const TokenSelector = () => {
-    const selectorState = useSelector(state => state.tokenSelectorSlice);
-    const networkState = useSelector(state => state.networkSlice);
+    const { networkSlice, tokenSelectorSlice, externalDataSlice } = useSelector(state => state);
     const dispatch = useDispatch();
 
-    const tokenList = useSelector(state => state.externalDataSlice.tokenList);
+    const selectedToken = tokenSelectorSlice.selectedToken;
+    const tokenList = externalDataSlice.tokenList;
 
     useEffect(() => {
-        if (selectorState.selectedToken.ticker)
+        if (selectedToken.ticker)
             return;
 
         dispatch(selectToken(tokenList[0]))
-    }, [dispatch, selectorState.selectedToken.ticker, tokenList]);
+    }, [dispatch, selectedToken.ticker, tokenList]);
 
     useEffect(() => {
-        if (!networkState.userAddress)
+        if (!networkSlice.userAddress)
             return;
 
         dispatch(getSelectedTokenBalance({
-            tokenAddress: selectorState.selectedToken.address,
-            userAddress: networkState.userAddress,
-            isNativeCurrency: selectorState.selectedToken.native
+            tokenAddress: selectedToken.address,
+            userAddress: networkSlice.userAddress,
+            isNativeCurrency: selectedToken.native
         }));
-    }, [dispatch, networkState.userAddress, selectorState.selectedToken.address, selectorState.selectedToken.native])
+    }, [dispatch, networkSlice.userAddress, selectedToken.address, selectedToken.native])
 
-    let balanceLabel = selectorState.balance && networkState.userAddress ? (
-        <div className="token-user-balance">balance: {fromBaseUnit(selectorState.balance)}</div>
+    let balanceLabel = tokenSelectorSlice.balance && networkSlice.userAddress ? (
+        <div className="token-user-balance">balance: {fromBaseUnit(tokenSelectorSlice.balance)}</div>
     ) : null;
 
     return (
@@ -46,7 +43,7 @@ const TokenSelector = () => {
                 }}
                 placeholder="Amount"
                 type="number"
-                value={selectorState.amount} />
+                value={tokenSelectorSlice.amount} />
             {balanceLabel}
         </>
     );

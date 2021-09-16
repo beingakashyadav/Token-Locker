@@ -51,12 +51,14 @@ export const getNativeCurrency = async () => {
         case ETH_GANACHE:
             return {
                 name: "Ethereum",
-                ticker: "ETH"
+                ticker: "ETH",
+                native: true
             }
         case ETH_BSC:
             return {
                 name: "Binance Coin",
-                ticker: "BNB"
+                ticker: "BNB",
+                native: true
             }
         default:
             return []

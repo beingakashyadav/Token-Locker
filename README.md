@@ -10,6 +10,8 @@ Run `yarn install && yarn start` at repo root to compile and run frontend.
 
 Run `cd /ethereum && truffle compile && truffle migrate` to compile and deploy scripts to ganache
 
+Or `truffle migrate --network ropsten`  to deploy scripts to ropsten
+
 Truffle compiles and copies artifacts at /public/contracts to access them from react-app
 
 ## User Guide

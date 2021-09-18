@@ -28,6 +28,7 @@ const App = () => {
 
         window.ethereum.on('chainChanged', (chainId) => {
             dispatch(setNetwork(Web3Utils.hexToNumber(chainId)));
+            dispatch(fetchExternalData());
         });
 
         dispatch(fetchExternalData());

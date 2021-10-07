@@ -5,9 +5,14 @@ const endpoints = require("./private.json").endpoints;
 module.exports = {
     contracts_build_directory: "../public/contracts",
     networks: {
-        development: {
+        dev: {
             host: "127.0.0.1",
             port: 7545,
+            network_id: "*"
+        },
+        dev2: {
+            host: "127.0.0.1",
+            port: 8545,
             network_id: "*"
         },
         ropsten: {

@@ -15,8 +15,8 @@ const TokenSelector = () => {
         if (selectedToken.ticker)
             return;
 
-        dispatch(selectToken(tokenList[0]))
-    }, [dispatch, selectedToken.ticker, tokenList]);
+        dispatch(selectToken(externalDataSlice.nativeCurrency))
+    }, [dispatch, selectedToken.ticker, tokenList, externalDataSlice.nativeCurrency]);
 
     useEffect(() => {
         if (!networkSlice.userAddress)

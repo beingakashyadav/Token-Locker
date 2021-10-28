@@ -126,15 +126,40 @@ export const clearApproval = createAsyncThunk(
     }
 );
 
+export const selectToken = createAsyncThunk(
+    "tokenSelector/selectToken",
+    async (token) => {
+
+        let web3 = await getWeb3();
+        
+        if (token.native) {
+            return token;
+        } else {
+            try {
+                let selectedTokenContract = new web3.eth.Contract(await getErc20Abi(), token.address);
+
+                let totalSupply = await selectedTokenContract
+                    .methods
+                    .totalSupply()
+                    .call();
+
+                return {
+                    ...token,
+                    totalSupply
+                }
+            }
+            catch (e) { console.log(e) }
+        }
+
+    }
+)
+
 export const tokenSelectorSlice = createSlice({
     name: 'tokenSelectorSlice',
     initialState,
     reducers: {
         setTokenAmount: (state, action) => {
             state.amount = action.payload;
-        },
-        selectToken: (state, action) => {
-            state.selectedToken = { ...action.payload }
         },
         setLockUntil: (state, action) => {
             state.lockUntil = action.payload;
@@ -169,13 +194,15 @@ export const tokenSelectorSlice = createSlice({
             })
             .addCase(lockToken.rejected, (state, action) => {
                 state.isApproveLockLoading = false;
+            })
+            .addCase(selectToken.fulfilled, (state, action) => {
+                state.selectedToken = { ...action.payload }
             });
     }
 });
 
 export const {
     setTokenAmount,
-    selectToken,
     setLockUntil,
     setApproved,
     clearAmount

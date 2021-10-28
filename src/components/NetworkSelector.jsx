@@ -2,9 +2,10 @@ import React from 'react';
 import { shortAddress } from '../helpers';
 import { useSelector, useDispatch } from 'react-redux';
 import { connectToProvider, selectNetwork, setAddress } from '../reduxSlices/networkSlice';
+import { ETH_BSC, ETH_GANACHE, ETH_ROPSTEN } from '../constants';
 
 function NetworkSelector() {
-    const networkState = useSelector(state => state.networkSlice);
+    const { networkSlice, externalDataSlice } = useSelector(state => state);
     const dispatch = useDispatch();
 
     return (
@@ -19,11 +20,11 @@ function NetworkSelector() {
                     <button
                         className="tabs tabs-connect animated big-button"
                         onClick={() => {
-                            networkState.userAddress ? 
-                                dispatch(setAddress("")) : 
+                            networkSlice.userAddress ?
+                                dispatch(setAddress("")) :
                                 dispatch(connectToProvider())
                         }}>
-                        {getConnectButtonLabel(networkState)}
+                        {getConnectButtonLabel(networkSlice, externalDataSlice)}
                     </button>
                 </div>
             </div>
@@ -31,11 +32,20 @@ function NetworkSelector() {
     );
 }
 
-const getConnectButtonLabel = (networkState) => {
+const getConnectButtonLabel = (networkState, externalDataSlice) => {
     if (networkState.userAddress)
         return shortAddress(networkState.userAddress);
 
-    return `Connect to ${networkState.network === "terra" ? "Terra Station" : "Metamask"}`;
+    let chainId = externalDataSlice.chainId;
+    let networkName = "";
+    if (chainId === ETH_ROPSTEN)
+        networkName = "Ropsten"
+    else if (chainId === ETH_GANACHE)
+        networkName = "Ganache"
+    else if (chainId === ETH_BSC)
+        networkName = "BSC"
+
+    return `Connect to Metamask (${networkName})`;
 }
 
 export default NetworkSelector;

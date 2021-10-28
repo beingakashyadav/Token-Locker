@@ -46,5 +46,22 @@ export const getErc20Abi = async () => {
 }
 
 export const toBigNumber = (number) => new Web3Utils.BN(number);
-export const fromBaseUnit = (value) => Web3Utils.fromWei(value?.toString(), 'ether'); 
-export const toBaseUnit = (value) => Web3Utils.toWei(value?.toString(), 'ether');
+
+export const fromBaseUnit = (value, decimals = 18) => 
+    value ? Web3Utils.fromWei(value?.toString(), decimalToUnit(decimals)) : null; 
+
+export const toBaseUnit = (value, decimals = 18) => 
+    value ? Web3Utils.toWei(value?.toString(), decimalToUnit(decimals)) : null;
+
+const decimalToUnit = (decimal) => {
+    switch (decimal) {
+        case 18: return 'ether';
+        case 15: return 'milliether';
+        case 12: return 'microether';
+        case 9: return 'gwei';
+        case 6: return 'mwei';
+        case 3: return 'kwei';
+        case 1: return 'wei';
+        default: return 'ether';
+    }
+}

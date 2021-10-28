@@ -15,7 +15,7 @@ const TokenSelector = () => {
         if (selectedToken.ticker)
             return;
 
-        dispatch(selectToken(externalDataSlice.nativeCurrency))
+        dispatch(selectToken(externalDataSlice.nativeCurrency));
     }, [dispatch, selectedToken.ticker, tokenList, externalDataSlice.nativeCurrency]);
 
     useEffect(() => {
@@ -30,7 +30,9 @@ const TokenSelector = () => {
     }, [dispatch, networkSlice.userAddress, selectedToken.address, selectedToken.native])
 
     let balanceLabel = tokenSelectorSlice.balance && networkSlice.userAddress ? (
-        <div className="token-user-balance">balance: {fromBaseUnit(tokenSelectorSlice.balance)}</div>
+        <div className="token-user-balance">
+            balance: {fromBaseUnit(tokenSelectorSlice.balance, selectedToken.decimals)}
+        </div>
     ) : null;
 
     return (

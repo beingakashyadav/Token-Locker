@@ -7,7 +7,7 @@ import "react-datetime/css/react-datetime.css";
 import UserLocks from "./UserLocks"
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchExternalData, setNetwork } from '../reduxSlices/externalDataSlice';
-import { ETH_GANACHE, ETH_ROPSTEN } from '../constants';
+import { ETH_BSC, ETH_GANACHE, ETH_ROPSTEN } from '../constants';
 import { setAddress } from '../reduxSlices/networkSlice';
 import Web3Utils from 'web3-utils';
 import DateSelector from './DateSelector';
@@ -38,7 +38,8 @@ const App = () => {
         return ("No metamask detected");
 
     if (externalDataSlice.chainId !== ETH_ROPSTEN && 
-        externalDataSlice.chainId !== ETH_GANACHE)
+        externalDataSlice.chainId !== ETH_GANACHE && 
+        externalDataSlice.chainId !== ETH_BSC)
         return ("Please switch network to Ropsten");
 
     if (!externalDataSlice.externalDataLoaded)

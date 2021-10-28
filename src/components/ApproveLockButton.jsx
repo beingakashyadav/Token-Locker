@@ -55,12 +55,14 @@ const ApproveLockBtnForEth = () => {
         onClick={() => {
             if (!valid)
                 return;
+            
+            let selToken = tokenSelectorSlice.selectedToken;
 
             let action = lockToken({
-                isNative: tokenSelectorSlice.selectedToken.native,
+                isNative: selToken.native,
                 lockUntil: tokenSelectorSlice.lockUntil.toString(),
                 amount: toBaseUnit(tokenSelectorSlice.amount),
-                tokenAddress: tokenSelectorSlice.selectedToken.address,
+                tokenAddress: selToken.address,
                 userAddress: networkSlice.userAddress
             });
 
@@ -76,13 +78,14 @@ const ApproveLockBtnForErc20 = () => {
     const { tokenSelectorSlice, networkSlice } = useSelector(state => state);
     const dispatch = useDispatch();
 
-    let balance = fromBaseUnit(tokenSelectorSlice.balance);
-    let valid = tokenSelectorSlice.selectedToken.address &&
+    let selToken = tokenSelectorSlice.selectedToken;
+    let balance = fromBaseUnit(tokenSelectorSlice.balance, selToken.decimals);
+    let valid = selToken.address &&
         Number(tokenSelectorSlice.amount) > 0 &&
         Number(tokenSelectorSlice.amount) <= Number(balance) &&
         tokenSelectorSlice.lockUntil > moment().unix();
 
-    let approved = Number(fromBaseUnit(tokenSelectorSlice.approvedAmount)) >= Number(tokenSelectorSlice.amount);
+    let approved = Number(fromBaseUnit(tokenSelectorSlice.approvedAmount, selToken.decimals)) >= Number(tokenSelectorSlice.amount);
     let btnclass = `lock-button animated big-button ${!valid && "disabled"}`;
 
     if (approved)
@@ -93,10 +96,10 @@ const ApproveLockBtnForErc20 = () => {
                     return;
 
                 let action = lockToken({
-                    isNative: tokenSelectorSlice.selectedToken.native,
+                    isNative: selToken.native,
                     lockUntil: tokenSelectorSlice.lockUntil.toString(),
-                    amount: toBaseUnit(tokenSelectorSlice.amount),
-                    tokenAddress: tokenSelectorSlice.selectedToken.address,
+                    amount: toBaseUnit(tokenSelectorSlice.amount, selToken.decimals),
+                    tokenAddress: selToken.address,
                     userAddress: networkSlice.userAddress
                 });
 

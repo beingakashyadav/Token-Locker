@@ -132,7 +132,7 @@ export const selectToken = createAsyncThunk(
 
         let web3 = await getWeb3();
         
-        if (token.native) {
+        if (token.native || token.totalSupply) {
             return token;
         } else {
             try {
